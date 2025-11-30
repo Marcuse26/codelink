@@ -2,8 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Usamos CSS normal en lugar de @apply para evitar errores de compilación */
+/* Tus estilos personalizados abajo */
 body {
-  background-color: #f9fafb; /* Equivalente a bg-gray-50 */
-  color: #1f2937;            /* Equivalente a text-gray-800 */
+  background-color: #f9fafb;
+  color: #1f2937;
 }
