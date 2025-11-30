@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* El resto de tus estilos globales debe ir después de las directivas de @tailwind.
+   Asegúrate de que no haya texto ni código encima de estas tres líneas.
+*/
+
+/* Ejemplo de estilos que añadimos: */
+body {
+  @apply bg-gray-50 text-gray-800;
+}

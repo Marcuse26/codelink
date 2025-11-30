@@ -1,8 +1,0 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* Estilos de fondo y tipografía para el cuerpo */
-body {
-  @apply bg-gray-50 text-gray-800;
-}
