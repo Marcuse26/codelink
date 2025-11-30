@@ -1,7 +1,5 @@
 // src/data/habitos.ts
 
-// NOTA: Para actualizar esta gráfica, simplemente edita estos arrays.
-// Los valores representan el porcentaje de hábitos cumplidos ese día.
 export const habitosData = [
   { dia: 'L', yo: 70, ella: 80 },
   { dia: 'M', yo: 85, ella: 75 },

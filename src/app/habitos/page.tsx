@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
-import { habitosData } from '@/data/habitos';
+// CORRECCIÓN: Usamos ruta relativa
+import { habitosData } from '../../data/habitos';
 
 const PorcentajeInput = ({ label, initialValue, color }: { label: string, initialValue: number, color: string }) => {
     const [percentage, setPercentage] = useState(initialValue);

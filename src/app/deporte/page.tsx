@@ -1,16 +1,17 @@
 'use client';
 
 import React from 'react';
-import { RachaData } from '@/data/racha';
+// CORRECCIÓN: Usamos ruta relativa para evitar errores de alias
+import { RachaData } from '../../data/racha';
 
 export default function DeportePage() {
-    // Si RachaData no existe o está vacío, usamos valores por defecto para evitar errores
+    // Valores por defecto por si el archivo de datos falla
     const miRacha = RachaData?.miRacha || 0;
     const suRacha = RachaData?.suRacha || 0;
     const rachaConjunta = miRacha + suRacha; 
 
     const handleStreakUpdate = (user: string) => {
-        alert(`¡Racha de ${user} activada! Recuerda editar el archivo src/data/racha.ts para guardar el cambio real.`);
+        alert(`¡Racha de ${user} activada! Recuerda editar el archivo src/data/racha.ts para guardar el cambio.`);
     };
 
     return (
@@ -34,14 +35,6 @@ export default function DeportePage() {
                 <div className="w-5/12 bg-white p-6 rounded-xl shadow-lg border-l-4 border-red-500">
                     <h2 className="text-3xl font-bold text-gray-800 mb-3">Su Racha: {suRacha} días</h2>
                      <button onClick={() => handleStreakUpdate("SUYO")} className="w-full py-3 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition">Activar Racha</button>
-                </div>
-            </div>
-            
-             <div className="text-center">
-                <p className="text-lg font-semibold text-gray-700 mb-4">Perfiles de Strava:</p>
-                <div className="flex justify-center space-x-6">
-                    <a href="#" className="py-2 px-4 bg-orange-500 text-white rounded-lg">Mi Perfil</a>
-                    <a href="#" className="py-2 px-4 bg-orange-500 text-white rounded-lg">Su Perfil</a>
                 </div>
             </div>
         </div>
