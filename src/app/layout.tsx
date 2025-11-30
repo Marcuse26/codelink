@@ -1,6 +1,6 @@
 'use client'; // Importante porque usamos AuthContext y hooks
 
-import './globals.css';
+import '../globals.css';
 import Link from 'next/link';
 import { Inter } from 'next/font/google';
 import { AuthProvider, useAuth } from '../context/AuthContext';
