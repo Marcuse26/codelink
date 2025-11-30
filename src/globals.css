@@ -2,11 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* El resto de tus estilos globales debe ir después de las directivas de @tailwind.
-   Asegúrate de que no haya texto ni código encima de estas tres líneas.
-*/
-
-/* Ejemplo de estilos que añadimos: */
+/* Usamos CSS normal en lugar de @apply para evitar errores de compilación */
 body {
-  @apply bg-gray-50 text-gray-800;
+  background-color: #f9fafb; /* Equivalente a bg-gray-50 */
+  color: #1f2937;            /* Equivalente a text-gray-800 */
 }
