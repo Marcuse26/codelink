@@ -61,12 +61,13 @@ export default function CalendarioPage() {
       {/* CONTADOR REDISEÑADO */}
       <div className="bg-white rounded-[2.5rem] shadow-xl border border-gray-200 p-10 flex flex-col items-center justify-center w-full max-w-2xl mx-auto transform hover:scale-[1.01] transition-transform duration-500">
         
-        {/* PARTE SUPERIOR: DÍAS (Con texto) */}
-        <div className="flex flex-col items-center mb-6">
-            <span className="text-9xl font-black text-gray-900 leading-none tracking-tighter">
+        {/* PARTE SUPERIOR: DÍAS (Horizontal) */}
+        {/* Cambiado flex-col a flex-row y alineado a la base (baseline) */}
+        <div className="flex flex-row items-baseline justify-center gap-4 mb-6">
+            <span className="text-8xl md:text-9xl font-black text-gray-900 leading-none tracking-tighter">
                 {timeLeft.days}
             </span>
-            <span className="text-xl font-bold text-gray-400 tracking-[0.5em] uppercase mt-4 pl-2">
+            <span className="text-2xl md:text-3xl font-bold text-gray-400 uppercase tracking-widest">
                 Días
             </span>
         </div>
