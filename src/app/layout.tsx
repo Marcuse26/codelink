@@ -7,14 +7,14 @@ import { AuthProvider, useAuth } from '../context/AuthContext';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { signOut } from 'firebase/auth';
-import { ref, onValue } from 'firebase/database';
-import { auth, db } from '../firebase/config';
+import { auth } from '../firebase/config';
 
 const inter = Inter({ subsets: ['latin'] });
 
 // --- ICONOS ---
 const Icons = {
-  Agenda: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>,
+  // Cambio de icono Agenda a uno más académico (Birrete)
+  Academic: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" /></svg>,
   Habits: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
   Sport: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>,
   Heart: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>,
@@ -34,7 +34,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
     }
   }, [user, loading, router, pathname]);
 
-  // Obtener nombre real desde la base de datos si existe
   useEffect(() => {
     if (user?.displayName) {
       setAppUser(user.displayName);
@@ -59,7 +58,8 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
           <h2 className="mb-3 px-3 text-xs font-bold uppercase tracking-widest text-gray-500">General</h2>
           <nav className="space-y-1">
-            <SidebarLink href="/" active={pathname === '/'} icon={<Icons.Agenda />} label="Agenda" />
+            {/* CAMBIO AQUI: Agenda -> Académico */}
+            <SidebarLink href="/" active={pathname === '/'} icon={<Icons.Academic />} label="Académico" />
             <SidebarLink href="/habitos" active={pathname === '/habitos'} icon={<Icons.Habits />} label="Hábitos" />
             <SidebarLink href="/deporte" active={pathname === '/deporte'} icon={<Icons.Sport />} label="Deporte" />
             <SidebarLink href="/calendario" active={pathname === '/calendario'} icon={<Icons.Heart />} label="Nosotros" />
@@ -82,7 +82,8 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
       <main className="flex flex-1 flex-col overflow-hidden bg-[#f0f2f5]">
         <header className="flex h-[80px] shrink-0 items-center justify-between border-b border-[#e9ecef] bg-white px-8">
           <h1 className="text-2xl font-bold text-[#212529]">
-            {pathname === '/' ? 'Agenda' : 
+            {/* CAMBIO AQUI: Título condicional */}
+            {pathname === '/' ? 'Académico' : 
              pathname === '/habitos' ? 'Hábitos' : 
              pathname === '/deporte' ? 'Deporte' : 
              pathname === '/calendario' ? 'Nosotros' : 'Ajustes'}
