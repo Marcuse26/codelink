@@ -13,7 +13,6 @@ export default function CalendarioPage() {
     calendarUrl2: '#'
   });
 
-  // 1. Cargar Configuración
   useEffect(() => {
     const unsubscribe = onValue(ref(db, 'settings'), (snap) => {
       const data = snap.val();
@@ -22,7 +21,6 @@ export default function CalendarioPage() {
     return () => unsubscribe();
   }, []);
 
-  // 2. Lógica del Contador
   useEffect(() => {
     if (!config.reunionDate) return;
 
@@ -47,59 +45,46 @@ export default function CalendarioPage() {
     return () => clearInterval(timer);
   }, [config.reunionDate]);
 
-  // Helper para añadir el cero delante (05, 09...)
   const f = (n: number) => n < 10 ? `0${n}` : n;
 
   return (
     <div className="flex flex-col items-center justify-center space-y-10 py-10 w-full">
       
-      {/* Título */}
       <h1 className="text-3xl font-black text-gray-800 uppercase tracking-widest text-center">
         Tiempo Restante
       </h1>
 
-      {/* CONTADOR REDISEÑADO */}
       <div className="bg-white rounded-[2.5rem] shadow-xl border border-gray-200 p-10 flex flex-col items-center justify-center w-full max-w-2xl mx-auto transform hover:scale-[1.01] transition-transform duration-500">
         
-        {/* PARTE SUPERIOR: DÍAS (Horizontal con separación) */}
-        <div className="flex flex-row items-baseline justify-center gap-6 mb-6">
+        {/* PARTE SUPERIOR: DÍAS - ESPACIO FORZADO */}
+        <div className="flex flex-row items-baseline justify-center w-full mb-6">
             <span className="text-8xl md:text-9xl font-black text-gray-900 leading-none tracking-tighter">
                 {timeLeft.days}
             </span>
-            <span className="text-2xl md:text-3xl font-bold text-gray-400 uppercase tracking-widest translate-y-[-10px]">
-                Días
+            {/* Margen a la izquierda (ml-6) para forzar separación */}
+            <span className="text-2xl md:text-3xl font-bold text-gray-400 uppercase tracking-widest ml-6">
+                DÍAS
             </span>
         </div>
 
-        {/* Separador */}
         <div className="w-1/2 h-1 bg-gray-100 rounded-full mb-8"></div>
 
-        {/* PARTE INFERIOR: RELOJ DIGITAL (Solo números) */}
+        {/* PARTE INFERIOR: RELOJ DIGITAL */}
         <div className="flex items-end gap-2 md:gap-4">
-            
-            {/* Horas */}
             <span className="text-5xl md:text-6xl font-bold text-gray-800 tabular-nums leading-none">
                 {f(timeLeft.hours)}
             </span>
-
             <span className="text-4xl md:text-5xl text-gray-300 pb-1 leading-none">:</span>
-
-            {/* Minutos */}
             <span className="text-5xl md:text-6xl font-bold text-gray-800 tabular-nums leading-none">
                 {f(timeLeft.minutes)}
             </span>
-
             <span className="text-4xl md:text-5xl text-gray-300 pb-1 leading-none">:</span>
-
-            {/* Segundos */}
             <span className="text-5xl md:text-6xl font-bold text-gray-800 tabular-nums leading-none">
                 {f(timeLeft.seconds)}
             </span>
-
         </div>
       </div>
 
-      {/* ENLACES A CALENDARIOS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl px-4 mt-8">
         <a 
             href={config.calendarUrl1 || '#'} 
