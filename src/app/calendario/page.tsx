@@ -61,50 +61,40 @@ export default function CalendarioPage() {
       {/* CONTADOR REDISEÑADO */}
       <div className="bg-white rounded-[2.5rem] shadow-xl border border-gray-200 p-10 flex flex-col items-center justify-center w-full max-w-2xl mx-auto transform hover:scale-[1.01] transition-transform duration-500">
         
-        {/* PARTE SUPERIOR: DÍAS */}
-        <div className="flex flex-col items-center mb-8">
-            {/* Color sólido gris oscuro para asegurar visibilidad */}
+        {/* PARTE SUPERIOR: DÍAS (Con texto) */}
+        <div className="flex flex-col items-center mb-6">
             <span className="text-9xl font-black text-gray-900 leading-none tracking-tighter">
                 {timeLeft.days}
             </span>
-            <span className="text-2xl font-bold text-gray-400 tracking-[0.5em] uppercase mt-2 pl-2">
+            <span className="text-xl font-bold text-gray-400 tracking-[0.5em] uppercase mt-4 pl-2">
                 Días
             </span>
         </div>
 
         {/* Separador */}
-        <div className="w-2/3 h-1 bg-gray-100 rounded-full mb-8"></div>
+        <div className="w-1/2 h-1 bg-gray-100 rounded-full mb-8"></div>
 
-        {/* PARTE INFERIOR: HH:MM:SS */}
-        <div className="flex items-center gap-4 md:gap-8">
+        {/* PARTE INFERIOR: RELOJ DIGITAL (Solo números) */}
+        <div className="flex items-end gap-2 md:gap-4">
             
             {/* Horas */}
-            <div className="flex flex-col items-center">
-                <span className="text-5xl font-bold text-gray-800 tabular-nums">
-                    {f(timeLeft.hours)}
-                </span>
-                <span className="text-xs text-gray-400 font-bold uppercase tracking-wider mt-1">Horas</span>
-            </div>
+            <span className="text-5xl md:text-6xl font-bold text-gray-800 tabular-nums leading-none">
+                {f(timeLeft.hours)}
+            </span>
 
-            <span className="text-4xl text-gray-300 -mt-4">:</span>
+            <span className="text-4xl md:text-5xl text-gray-300 pb-1 leading-none">:</span>
 
             {/* Minutos */}
-            <div className="flex flex-col items-center">
-                <span className="text-5xl font-bold text-gray-800 tabular-nums">
-                    {f(timeLeft.minutes)}
-                </span>
-                <span className="text-xs text-gray-400 font-bold uppercase tracking-wider mt-1">Min</span>
-            </div>
+            <span className="text-5xl md:text-6xl font-bold text-gray-800 tabular-nums leading-none">
+                {f(timeLeft.minutes)}
+            </span>
 
-            <span className="text-4xl text-gray-300 -mt-4">:</span>
+            <span className="text-4xl md:text-5xl text-gray-300 pb-1 leading-none">:</span>
 
             {/* Segundos */}
-            <div className="flex flex-col items-center">
-                <span className="text-5xl font-bold text-gray-800 tabular-nums">
-                    {f(timeLeft.seconds)}
-                </span>
-                <span className="text-xs text-gray-400 font-bold uppercase tracking-wider mt-1">Seg</span>
-            </div>
+            <span className="text-5xl md:text-6xl font-bold text-gray-800 tabular-nums leading-none">
+                {f(timeLeft.seconds)}
+            </span>
 
         </div>
       </div>
