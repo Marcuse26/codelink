@@ -112,7 +112,7 @@ export default function HabitosPage() {
 
   return (
     <div className="space-y-8 py-6">
-      <h1 className="text-3xl font-bold text-white text-center">✅ Hábitos Diarios</h1>
+      <h1 className="text-3xl font-bold text-gray-800 text-center">✅ Hábitos Diarios</h1>
       
       {/* Inputs */}
       <div className="grid grid-cols-2 gap-6">
@@ -145,9 +145,9 @@ export default function HabitosPage() {
         </div>
       </div>
 
-      {/* Gráfica PROFESIONAL DINÁMICA */}
-      <div className="bg-[#1a1a2e] p-6 rounded-3xl border border-white/10 shadow-2xl">
-        <h3 className="text-white font-bold mb-6 text-lg pl-2 border-l-4" style={{ borderColor: config.color1 }}>Progreso Semanal</h3>
+      {/* Gráfica PROFESIONAL - Estilo Claro */}
+      <div className="bg-[#fdfbf7] p-6 rounded-3xl border border-gray-200 shadow-xl">
+        <h3 className="text-gray-700 font-bold mb-6 text-lg pl-2 border-l-4" style={{ borderColor: config.color1 }}>Progreso Semanal</h3>
         
         <div className="h-[350px] w-full">
           <ResponsiveContainer width="100%" height="100%">
@@ -163,20 +163,21 @@ export default function HabitosPage() {
                 </linearGradient>
               </defs>
               
-              <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
+              {/* Rejilla más oscura para verse en fondo claro */}
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
               
               <XAxis 
                 dataKey="name" 
-                stroke="#6b7280" 
-                tick={{fill: '#9ca3af', fontSize: 12}} 
+                stroke="#9ca3af" 
+                tick={{fill: '#4b5563', fontSize: 12}} 
                 axisLine={false}
                 tickLine={false}
                 dy={10}
               />
               
               <YAxis 
-                stroke="#6b7280" 
-                tick={{fill: '#9ca3af', fontSize: 12}} 
+                stroke="#9ca3af" 
+                tick={{fill: '#4b5563', fontSize: 12}} 
                 axisLine={false}
                 tickLine={false}
                 domain={[0, 100]}
@@ -184,15 +185,16 @@ export default function HabitosPage() {
               
               <Tooltip 
                 contentStyle={{ 
-                    backgroundColor: 'rgba(0,0,0,0.9)', 
-                    backdropFilter: 'blur(4px)',
-                    border: '1px solid rgba(255,255,255,0.1)', 
+                    backgroundColor: '#ffffff', 
                     borderRadius: '12px',
-                    color: '#fff'
+                    border: '1px solid #e5e7eb',
+                    color: '#1f2937',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
                 }} 
+                itemStyle={{ color: '#1f2937' }}
               />
               
-              <Legend verticalAlign="top" height={36} iconType="circle" />
+              <Legend verticalAlign="top" height={36} iconType="circle" wrapperStyle={{ color: '#374151' }} />
 
               <Area 
                 name={config.user1}
