@@ -4,7 +4,6 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '../firebase/config';
 
-// Definimos qué datos compartiremos
 interface AuthContextType {
   user: User | null;
   loading: boolean;
@@ -19,17 +18,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Escuchar cambios (login/logout)
+    // Si auth falla (por falta de API keys), terminamos la carga inmediatamente
+    if (!auth) {
+        setLoading(false);
+        return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setLoading(false);
+    }, (error) => {
+        console.error("Auth Error:", error);
+        setLoading(false);
     });
+
     return () => unsubscribe();
   }, []);
 
   return (
     <AuthContext.Provider value={{ user, loading }}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };

@@ -11,9 +11,8 @@ import { auth } from '../firebase/config';
 
 const inter = Inter({ subsets: ['latin'] });
 
-// Iconos SVG
 const Icons = {
-  Academic: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" /></svg>,
+  Academic: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" /></svg>,
   Habits: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
   Sport: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>,
   Heart: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>,
@@ -32,24 +31,45 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
     }
   }, [user, loading, router, pathname]);
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center bg-[#1a1a2e]"><div className="w-12 h-12 border-4 border-pink-500 rounded-full animate-spin border-t-transparent"></div></div>;
-  if (!user && pathname !== '/login') return null;
-  if (pathname === '/login') return <main>{children}</main>;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#1a1a2e]">
+        <div className="w-16 h-16 border-4 border-pink-500 border-t-transparent rounded-full animate-spin"></div>
+        <p className="mt-4 text-pink-400 font-bold animate-pulse">Cargando...</p>
+      </div>
+    );
+  }
+
+  // Si estamos en login, renderizamos SOLO los hijos (el formulario), sin layout
+  if (pathname === '/login') {
+    return <main className="w-full h-full">{children}</main>;
+  }
+
+  // Si no hay usuario, retornamos null mientras redirige
+  if (!user) return null;
 
   return (
     <>
-      <main className="container mx-auto p-4 pb-32 min-h-screen">{children}</main>
-      
-      {/* Menú de navegación flotante - Z-Index 100 para asegurar visibilidad */}
-      <div className="fixed bottom-6 left-0 right-0 flex justify-center z-[100] px-4 pointer-events-none">
-        <nav className="glass-panel px-3 py-3 flex items-center space-x-2 sm:space-x-4 shadow-2xl bg-black/80 border border-white/10 backdrop-blur-xl rounded-full pointer-events-auto">
+      <main className="container mx-auto p-4 pb-32 min-h-screen animate-fade-in">
+        {children}
+      </main>
+
+      {/* MENÚ FLOTANTE Z-INDEX 9999 */}
+      <div className="fixed bottom-6 left-0 right-0 flex justify-center z-[9999] px-4">
+        <nav className="glass-panel px-4 py-3 flex items-center gap-2 sm:gap-4 shadow-[0_0_50px_rgba(0,0,0,0.5)] bg-[#1a1a2e]/90 border border-white/20 backdrop-blur-xl rounded-full">
           <NavLink href="/" active={pathname === '/'} icon={<Icons.Academic />}>Académico</NavLink>
           <NavLink href="/habitos" active={pathname === '/habitos'} icon={<Icons.Habits />}>Hábitos</NavLink>
           <NavLink href="/deporte" active={pathname === '/deporte'} icon={<Icons.Sport />}>Deporte</NavLink>
           <NavLink href="/calendario" active={pathname === '/calendario'} icon={<Icons.Heart />}>Nosotros</NavLink>
+          
           <div className="w-px h-6 bg-white/20 mx-2"></div>
-          <Link href="/config" className="p-2 text-gray-400 hover:text-white"><Icons.Settings /></Link>
-          <button onClick={() => signOut(auth)} className="p-2 text-red-400 hover:text-red-500"><Icons.Logout /></button>
+          
+          <Link href="/config" className={`p-2 rounded-full hover:bg-white/10 ${pathname === '/config' ? 'text-white' : 'text-gray-400'}`}>
+             <Icons.Settings />
+          </Link>
+          <button onClick={() => signOut(auth)} className="p-2 text-red-400 hover:bg-red-500/10 rounded-full">
+             <Icons.Logout />
+          </button>
         </nav>
       </div>
     </>
@@ -57,8 +77,16 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 };
 
 const NavLink = ({ href, active, children, icon }: any) => (
-  <Link href={href} className={`px-3 py-2 rounded-full text-xs font-bold flex items-center gap-2 ${active ? 'bg-pink-600 text-white' : 'text-gray-400'}`}>
-    {icon} <span className="hidden sm:inline">{children}</span>
+  <Link 
+    href={href} 
+    className={`px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 transition-all duration-300 ${
+      active 
+        ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white shadow-lg scale-105' 
+        : 'text-gray-400 hover:text-white hover:bg-white/5'
+    }`}
+  >
+    {icon}
+    <span className="hidden md:inline">{children}</span>
   </Link>
 );
 
@@ -66,7 +94,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="es">
       <body className={inter.className}>
-        <AuthProvider><MainLayout>{children}</MainLayout></AuthProvider>
+        <AuthProvider>
+          <MainLayout>{children}</MainLayout>
+        </AuthProvider>
       </body>
     </html>
   );
