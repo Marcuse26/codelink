@@ -18,21 +18,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Si auth falla (por falta de API keys), terminamos la carga inmediatamente
-    if (!auth) {
-        setLoading(false);
-        return;
-    }
-
+    // 1. Escuchar cambios de autenticación
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setLoading(false);
-    }, (error) => {
-        console.error("Auth Error:", error);
-        setLoading(false);
     });
 
-    return () => unsubscribe();
+    // 2. Seguro contra fallos: Si Firebase tarda más de 2 seg, dejar de cargar
+    const timeout = setTimeout(() => setLoading(false), 2000);
+
+    return () => {
+      unsubscribe();
+      clearTimeout(timeout);
+    };
   }, []);
 
   return (

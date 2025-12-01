@@ -26,7 +26,7 @@ export default function LoginPage() {
       }
       router.push('/');
     } catch (err: any) {
-      setError(err.message.includes('auth') ? 'Error de credenciales (revisa correo/contraseña)' : err.message);
+      setError(err.message.includes('auth') ? 'Credenciales incorrectas' : err.message);
     } finally {
       setLoading(false);
     }
@@ -35,45 +35,53 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-[#1a1a2e]">
       <div className="max-w-md w-full glass-card p-8 rounded-3xl shadow-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
-        <h2 className="text-4xl font-black text-center mb-2 text-white">CodeLink 💖</h2>
-        <p className="text-center text-gray-400 mb-8 text-sm uppercase tracking-widest">
-          {isRegister ? 'Crear Cuenta' : 'Iniciar Sesión'}
-        </p>
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600 mb-2">CodeLink 💖</h1>
+          <p className="text-gray-400 text-sm uppercase tracking-widest">
+            {isRegister ? 'Crear Nueva Cuenta' : 'Acceso Privado'}
+          </p>
+        </div>
         
-        {error && <div className="bg-red-500/20 text-red-200 p-3 rounded-xl mb-4 text-center text-sm">{error}</div>}
+        {error && <div className="bg-red-500/20 text-red-200 p-3 rounded-xl mb-6 text-center text-sm font-medium border border-red-500/20">{error}</div>}
 
         <form onSubmit={handleAuth} className="space-y-5">
-          <input 
-            type="email" 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
-            className="w-full p-4 rounded-xl bg-black/30 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-pink-500 transition" 
-            placeholder="Correo electrónico" 
-            required 
-          />
-          <input 
-            type="password" 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
-            className="w-full p-4 rounded-xl bg-black/30 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-pink-500 transition" 
-            placeholder="Contraseña" 
-            required 
-          />
+          <div>
+            <input 
+              type="email" 
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)} 
+              className="w-full p-4 rounded-xl bg-black/40 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-pink-500 transition focus:ring-1 focus:ring-pink-500" 
+              placeholder="Correo electrónico" 
+              required 
+            />
+          </div>
+          <div>
+            <input 
+              type="password" 
+              value={password} 
+              onChange={(e) => setPassword(e.target.value)} 
+              className="w-full p-4 rounded-xl bg-black/40 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-pink-500 transition focus:ring-1 focus:ring-pink-500" 
+              placeholder="Contraseña" 
+              required 
+            />
+          </div>
+          
           <button 
             type="submit" 
             disabled={loading} 
-            className="w-full py-4 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 text-white font-bold shadow-lg hover:scale-[1.02] transition-transform disabled:opacity-50"
+            className="w-full py-4 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 text-white font-bold shadow-lg hover:shadow-pink-500/25 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Procesando...' : (isRegister ? 'Registrarse' : 'Entrar')}
+            {loading ? 'Conectando...' : (isRegister ? 'Registrarse' : 'Entrar')}
           </button>
         </form>
 
-        <div className="mt-6 text-center">
+        <div className="mt-8 text-center">
           <button 
-            onClick={() => setIsRegister(!isRegister)} 
-            className="text-gray-400 hover:text-pink-400 text-sm font-medium transition"
+            onClick={() => { setIsRegister(!isRegister); setError(''); }} 
+            className="text-gray-400 hover:text-white text-sm font-medium transition flex items-center justify-center mx-auto gap-2 group"
           >
-            {isRegister ? '¿Ya tienes cuenta? Inicia sesión' : '¿No tienes cuenta? Regístrate'}
+            {isRegister ? '¿Ya tienes cuenta?' : '¿No tienes cuenta?'}
+            <span className="text-pink-400 group-hover:underline">{isRegister ? 'Inicia sesión' : 'Regístrate'}</span>
           </button>
         </div>
       </div>
