@@ -1,84 +1,147 @@
 'use client';
 
-import React from 'react';
+import { useState } from 'react';
+import { 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  sendEmailVerification, 
+  signOut,
+  updateProfile
+} from 'firebase/auth';
+import { ref, set, get, child } from 'firebase/database'; // <--- CAMBIO: Importaciones de Realtime DB
+import { auth, db } from '../../firebase/config';
+import { useRouter } from 'next/navigation';
 
-// Datos de ejemplo para el Heatmap (Días de la semana)
-const heatmapData = [
-  { dia: 'L', yo: 0.9, ella: 0.8 },
-  { dia: 'M', yo: 0.5, ella: 1.0 },
-  { dia: 'X', yo: 1.0, ella: 0.7 },
-  { dia: 'J', yo: 0.3, ella: 0.9 },
-  { dia: 'V', yo: 0.8, ella: 0.5 },
-  { dia: 'S', yo: 0.6, ella: 0.4 },
-  { dia: 'D', yo: 0.2, ella: 0.1 },
-];
+export default function LoginPage() {
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  
+  const router = useRouter();
 
-// Función para determinar el color según el porcentaje
-const getColorIntensity = (value: number) => {
-  if (value >= 0.9) return 'bg-green-600'; // 90-100%
-  if (value >= 0.7) return 'bg-yellow-500'; // 70-89%
-  if (value >= 0.4) return 'bg-orange-400'; // 40-69%
-  return 'bg-red-500'; // < 40%
-};
+  const handleAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setMessage('');
+    setLoading(true);
+    
+    try {
+      if (isRegistering) {
+        // --- REGISTRO CON REALTIME DATABASE ---
+        
+        // 1. Verificar si el usuario ya existe
+        const dbRef = ref(db);
+        const snapshot = await get(child(dbRef, `usernames/${username.toLowerCase()}`));
 
-// Componente para el Área de Tareas
-const TareaArea = ({ label, bgColor, link }: { label: string, bgColor: string, link: string }) => (
-    <div className={`w-1/2 p-6 rounded-xl shadow-lg ${bgColor}`}>
-        <h2 className="text-2xl font-bold mb-4 text-gray-900">{label}</h2>
-        <p className="text-gray-700 mb-4">
-            Aquí puedes pegar las tareas de la semana, entregas y eventos.
-        </p>
-        <a href={link} target="_blank" rel="noopener noreferrer" className="w-full py-2 block text-center bg-gray-800 text-white font-semibold rounded-lg hover:bg-gray-700 transition">
-            Ir a Trello/Notion
-        </a>
-    </div>
-);
+        if (snapshot.exists()) {
+          throw new Error("Este nombre de usuario ya está ocupado.");
+        }
 
-export default function AgendaPage() {
+        // 2. Crear cuenta de autenticación
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // 3. Guardar mapeo Usuario -> Email en Realtime DB
+        await set(ref(db, 'usernames/' + username.toLowerCase()), {
+          email: email,
+          uid: user.uid
+        });
+
+        // 4. Actualizar nombre
+        await updateProfile(user, { displayName: username });
+
+        // 5. Enviar verificación
+        await sendEmailVerification(user);
+        await signOut(auth);
+
+        setMessage(`¡Cuenta creada! Se ha enviado un correo a ${email}. Verifícalo.`);
+        setIsRegistering(false);
+        setPassword('');
+
+      } else {
+        // --- LOGIN CON REALTIME DATABASE ---
+
+        // 1. Buscar el email del usuario
+        const dbRef = ref(db);
+        const snapshot = await get(child(dbRef, `usernames/${username.toLowerCase()}`));
+
+        if (!snapshot.exists()) {
+          throw new Error("El nombre de usuario no existe.");
+        }
+
+        const registeredEmail = snapshot.val().email;
+
+        // 2. Iniciar sesión con ese email
+        const userCredential = await signInWithEmailAndPassword(auth, registeredEmail, password);
+        const user = userCredential.user;
+
+        // 3. Verificar validación de correo
+        if (!user.emailVerified) {
+          await signOut(auth);
+          throw new Error("Tu correo no ha sido verificado aún.");
+        }
+
+        router.push('/');
+      }
+
+    } catch (err: any) {
+      console.error(err);
+      if (err.message.includes("ocupado")) setError(err.message);
+      else if (err.message.includes("no existe")) setError(err.message);
+      else if (err.message.includes("verificado")) setError(err.message);
+      else if (err.code === 'auth/wrong-password') setError('Contraseña incorrecta.');
+      else if (err.code === 'auth/email-already-in-use') setError('Ese correo ya está registrado.');
+      else setError('Error: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="space-y-10">
-      <h1 className="text-4xl font-extrabold text-center text-gray-900">🎓 Agenda y Progreso Universitario</h1>
+    <div className="min-h-screen flex items-center justify-center bg-gray-900 px-4">
+      <div className="max-w-md w-full bg-white p-8 rounded-xl shadow-2xl">
+        <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">
+          {isRegistering ? 'Crear Cuenta' : 'Iniciar Sesión'}
+        </h2>
+        
+        {error && <p className="bg-red-100 text-red-700 p-3 rounded mb-4 text-sm border-l-4 border-red-500">{error}</p>}
+        {message && <p className="bg-green-100 text-green-800 p-3 rounded mb-4 text-sm border-l-4 border-green-500">{message}</p>}
 
-      {/* Tareas y Eventos Individuales */}
-      <div className="flex space-x-8">
-        <TareaArea 
-            label="Mi Espacio" 
-            bgColor="bg-blue-100" 
-            link="#"
-        />
-        <TareaArea 
-            label="Su Espacio" 
-            bgColor="bg-red-100" 
-            link="#"
-        />
-      </div>
+        <form onSubmit={handleAuth} className="space-y-4">
+          
+          <div>
+            <label className="block text-gray-700 text-sm font-bold mb-2">Nombre de Usuario</label>
+            <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="ej: marcos123" required />
+          </div>
 
-      {/* Heatmap Conjunto (Progreso Diario) */}
-      <div className="bg-white p-6 rounded-xl shadow-xl">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Progreso Académico Conjunto</h2>
-        <div className="flex justify-center space-x-4">
-          {heatmapData.map((item) => (
-            <div key={item.dia} className="flex flex-col items-center">
-              <span className="text-sm font-semibold mb-2">{item.dia}</span>
-              
-              {/* Bloque de Ella */}
-              <div
-                className={`w-10 h-10 rounded-lg shadow-md mb-2 cursor-pointer transition transform hover:scale-110 ${getColorIntensity(item.ella)}`}
-                title={`Su progreso el ${item.dia}: ${Math.round(item.ella * 100)}%`}
-              ></div>
-              
-              {/* Bloque Mío */}
-              <div
-                className={`w-10 h-10 rounded-lg shadow-md cursor-pointer transition transform hover:scale-110 ${getColorIntensity(item.yo)}`}
-                title={`Mi progreso el ${item.dia}: ${Math.round(item.yo * 100)}%`}
-              ></div>
+          {isRegistering && (
+            <div>
+              <label className="block text-gray-700 text-sm font-bold mb-2">Correo Electrónico</label>
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="tu@email.com" required />
             </div>
-          ))}
+          )}
+
+          <div>
+            <label className="block text-gray-700 text-sm font-bold mb-2">Contraseña</label>
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="******" required />
+          </div>
+          
+          <button type="submit" disabled={loading} className={`w-full text-white font-bold py-3 rounded-lg transition shadow-lg ${loading ? 'bg-gray-400' : 'bg-pink-600 hover:bg-pink-700'}`}>
+            {loading ? 'Procesando...' : (isRegistering ? 'Crear Cuenta y Verificar' : 'Entrar')}
+          </button>
+        </form>
+
+        <div className="mt-6 text-center text-sm text-gray-600">
+          {isRegistering ? '¿Ya tienes cuenta?' : '¿No tienes cuenta?'}
+          <button onClick={() => { setIsRegistering(!isRegistering); setError(''); setMessage(''); setUsername(''); setEmail(''); setPassword(''); }} className="text-pink-600 font-bold ml-1 hover:underline focus:outline-none">
+            {isRegistering ? 'Inicia Sesión' : 'Regístrate'}
+          </button>
         </div>
-        <p className="text-center text-sm text-gray-500 mt-6">
-            Arriba: Ella | Abajo: Tú <br/>
-            (Verde = Muy productivo, Rojo = Poco productivo)
-        </p>
       </div>
     </div>
   );
