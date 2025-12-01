@@ -50,7 +50,7 @@ const CorkboardWidget = () => {
     if (!newNoteText.trim()) return;
 
     const randomColor = noteColors[Math.floor(Math.random() * noteColors.length)];
-    const randomRotation = Math.floor(Math.random() * 10) - 5; // Rotación sutil entre -5 y 5 grados
+    const randomRotation = Math.floor(Math.random() * 10) - 5; 
 
     push(ref(db, 'notes'), {
       text: newNoteText,
@@ -67,25 +67,56 @@ const CorkboardWidget = () => {
     remove(ref(db, `notes/${id}`));
   };
 
+  // --- Lógica de Escalado Automático ---
+  const getDynamicStyles = (count: number) => {
+    if (count <= 4) {
+      return {
+        grid: "grid-cols-2 md:grid-cols-2", // Pocas notas: columnas anchas
+        card: "min-h-[160px] p-5",
+        text: "text-lg"
+      };
+    } else if (count <= 9) {
+      return {
+        grid: "grid-cols-3 md:grid-cols-3", // Más notas: 3 columnas
+        card: "min-h-[130px] p-4",
+        text: "text-base"
+      };
+    } else if (count <= 16) {
+      return {
+        grid: "grid-cols-4 md:grid-cols-4", // Bastantes notas: 4 columnas
+        card: "min-h-[100px] p-2",
+        text: "text-sm"
+      };
+    } else {
+      return {
+        grid: "grid-cols-5 md:grid-cols-6", // Muchas notas: modo compacto
+        card: "min-h-[80px] p-1",
+        text: "text-xs"
+      };
+    }
+  };
+
+  const styles = getDynamicStyles(notes.length);
+
   return (
-    <div className="relative w-full min-h-[400px] bg-[#d7c49e] rounded-xl border-[12px] border-[#8b5a2b] shadow-2xl p-6 overflow-hidden">
+    <div className="relative w-full min-h-[400px] bg-[#d7c49e] rounded-xl border-[12px] border-[#8b5a2b] shadow-2xl p-6 overflow-hidden flex flex-col">
       
       {/* Título y Botón */}
-      <div className="flex justify-between items-center mb-8 relative z-10">
+      <div className="flex justify-between items-center mb-6 relative z-10 shrink-0">
         <div className="bg-[#fdfbf7] px-4 py-2 shadow-md transform -rotate-1">
             <h2 className="text-xl font-black text-[#5d3a1a] uppercase tracking-widest border-b-2 border-[#5d3a1a]">
-            Tablón de Anuncios 📌
+            Tablón ({notes.length}) 📌
             </h2>
         </div>
         <button 
           onClick={() => setShowInput(!showInput)}
           className="bg-white text-[#8b5a2b] px-4 py-2 rounded-full font-bold shadow-md hover:scale-105 transition hover:bg-gray-50 border-2 border-[#8b5a2b]"
         >
-          {showInput ? 'Cerrar' : '+ Nueva Nota'}
+          {showInput ? 'Cerrar' : '+ Nota'}
         </button>
       </div>
 
-      {/* Formulario Flotante para Añadir Nota */}
+      {/* Formulario Flotante */}
       {showInput && (
         <div className="absolute top-24 left-1/2 transform -translate-x-1/2 z-30 w-72 animate-in fade-in zoom-in duration-200">
           <form onSubmit={addNote} className="bg-yellow-100 p-4 shadow-[0_10px_20px_rgba(0,0,0,0.3)] rotate-1 border-t-8 border-yellow-200/50">
@@ -110,44 +141,44 @@ const CorkboardWidget = () => {
         </div>
       )}
 
-      {/* Grid de Notas (Post-its) */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+      {/* Grid de Notas con Estilos Dinámicos */}
+      <div className={`grid ${styles.grid} gap-4 transition-all duration-500 ease-in-out`}>
         {notes.map((note) => (
           <div 
             key={note.id}
-            className={`relative p-5 shadow-[3px_3px_10px_rgba(0,0,0,0.15)] transition-transform hover:scale-105 duration-300 group ${note.color} min-h-[160px] flex items-center justify-center text-center`}
+            className={`relative shadow-[2px_2px_8px_rgba(0,0,0,0.15)] transition-transform hover:scale-105 duration-300 group ${note.color} ${styles.card} flex items-center justify-center text-center overflow-hidden`}
             style={{ transform: `rotate(${note.rotation}deg)` }}
           >
-            {/* Chincheta visual */}
-            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-red-600 rounded-full shadow-[2px_2px_4px_rgba(0,0,0,0.3)] z-10 border border-red-800"></div>
+            {/* Chincheta visual (escala con la nota) */}
+            <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-red-600 rounded-full shadow-[1px_1px_2px_rgba(0,0,0,0.3)] z-10 border border-red-800"></div>
             
-            <p className="text-gray-800 font-medium text-lg leading-snug break-words w-full">
+            <p className={`text-gray-800 font-medium leading-snug break-words w-full ${styles.text}`}>
               {note.text}
             </p>
 
-            {/* Botón borrar (visible al pasar el ratón) */}
+            {/* Botón borrar */}
             <button 
               onClick={(e) => { e.stopPropagation(); deleteNote(note.id); }}
-              className="absolute -bottom-2 -right-2 bg-red-500 text-white w-7 h-7 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all text-xs font-bold shadow-lg hover:bg-red-600 hover:scale-110 cursor-pointer"
+              className="absolute -bottom-1 -right-1 bg-red-500 text-white w-5 h-5 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all text-[10px] font-bold shadow-lg hover:bg-red-600 hover:scale-110 cursor-pointer"
               title="Quitar nota"
             >
               ✕
             </button>
           </div>
         ))}
-        
-        {notes.length === 0 && !showInput && (
-          <div className="col-span-full flex flex-col items-center justify-center text-[#8b5a2b]/30 mt-10 pointer-events-none select-none">
-            <p className="text-6xl mb-2">📌</p>
-            <p className="font-bold uppercase tracking-widest text-xl">El tablón está vacío</p>
-          </div>
-        )}
       </div>
+        
+      {notes.length === 0 && !showInput && (
+        <div className="flex-1 flex flex-col items-center justify-center text-[#8b5a2b]/30 pointer-events-none select-none min-h-[200px]">
+          <p className="text-6xl mb-2">📌</p>
+          <p className="font-bold uppercase tracking-widest text-xl">El tablón está vacío</p>
+        </div>
+      )}
     </div>
   );
 };
 
-// --- Componente Lista de Tareas (Reutilizable) ---
+// --- Componente Lista de Tareas (Sin cambios) ---
 const TodoCard = ({ title, dbPath, colorGradient }: { title: string, dbPath: string, colorGradient: string }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState('');
@@ -234,7 +265,7 @@ export default function AgendaPage() {
 
   return (
     <div className="space-y-8">
-      {/* TABLÓN DE ANUNCIOS (CORKBOARD) */}
+      {/* TABLÓN DE ANUNCIOS DINÁMICO */}
       <CorkboardWidget />
 
       {/* LISTAS DE TAREAS */}
