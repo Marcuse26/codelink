@@ -7,8 +7,10 @@ export default function ConfigPage() {
   const [form, setForm] = useState({ 
     user1: '', 
     user2: '', 
-    color1: '#3b82f6', // Azul por defecto
-    color2: '#ec4899', // Rosa por defecto
+    color1: '#3b82f6', 
+    color2: '#ec4899', 
+    calendarUrl1: '', // Nueva URL 1
+    calendarUrl2: '', // Nueva URL 2
     reunionDate: '' 
   });
 
@@ -31,7 +33,7 @@ export default function ConfigPage() {
       {/* Sección Usuario 1 */}
       <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
         <label className="text-gray-400 text-sm font-bold uppercase tracking-wider mb-2 block">Usuario 1</label>
-        <div className="flex gap-4">
+        <div className="flex gap-4 mb-3">
             <input 
                 className="flex-1 p-3 rounded-xl bg-black/30 text-white border border-white/10 outline-none focus:border-white/30 transition"
                 placeholder="Nombre"
@@ -45,12 +47,18 @@ export default function ConfigPage() {
                 onChange={e => setForm({...form, color1: e.target.value})}
             />
         </div>
+        <input 
+            className="w-full p-3 rounded-xl bg-black/30 text-white border border-white/10 outline-none focus:border-white/30 transition text-sm"
+            placeholder="URL del Calendario (ej: https://calendar.google.com/...)"
+            value={form.calendarUrl1}
+            onChange={e => setForm({...form, calendarUrl1: e.target.value})}
+        />
       </div>
 
       {/* Sección Usuario 2 */}
       <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
         <label className="text-gray-400 text-sm font-bold uppercase tracking-wider mb-2 block">Usuario 2</label>
-        <div className="flex gap-4">
+        <div className="flex gap-4 mb-3">
             <input 
                 className="flex-1 p-3 rounded-xl bg-black/30 text-white border border-white/10 outline-none focus:border-white/30 transition"
                 placeholder="Nombre"
@@ -64,11 +72,17 @@ export default function ConfigPage() {
                 onChange={e => setForm({...form, color2: e.target.value})}
             />
         </div>
+        <input 
+            className="w-full p-3 rounded-xl bg-black/30 text-white border border-white/10 outline-none focus:border-white/30 transition text-sm"
+            placeholder="URL del Calendario"
+            value={form.calendarUrl2}
+            onChange={e => setForm({...form, calendarUrl2: e.target.value})}
+        />
       </div>
 
       {/* Fecha Reunion */}
       <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
-        <label className="text-gray-400 text-sm font-bold uppercase tracking-wider mb-2 block">Fecha de Reunión</label>
+        <label className="text-gray-400 text-sm font-bold uppercase tracking-wider mb-2 block">Fecha del Reencuentro 💖</label>
         <input 
             type="datetime-local"
             className="w-full p-3 rounded-xl bg-black/30 text-white border border-white/10 outline-none focus:border-white/30 transition"
