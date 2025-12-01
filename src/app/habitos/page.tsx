@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { ref, onValue, update } from 'firebase/database';
-import { db } from '../firebase/config';
+// CORRECCIÓN: Subimos dos niveles para llegar a firebase/config
+import { db } from '../../firebase/config';
 
 // --- Helpers de Fechas ---
 const getTodayString = () => {
