@@ -96,10 +96,10 @@ export default function DeportePage() {
             onClick={handleStreak}
             disabled={isCompletedToday || loading}
             className={`
-                w-full py-6 rounded-2xl font-black text-xl shadow-lg transition-all transform active:scale-95
+                w-full py-6 rounded-2xl font-black text-xl shadow-lg transition-all transform active:scale-95 flex items-center justify-center gap-2
                 ${isCompletedToday 
                     ? 'bg-green-500 text-white cursor-default shadow-green-500/30' 
-                    : 'bg-[#1a1a2e] text-white hover:bg-black hover:shadow-2xl shadow-black/20 hover:-translate-y-1'
+                    : 'bg-orange-600 text-white hover:bg-orange-700 hover:shadow-2xl shadow-orange-500/20 hover:-translate-y-1'
                 }
             `}
         >
@@ -118,7 +118,7 @@ export default function DeportePage() {
         
         {/* Efecto decorativo si no está completado */}
         {!isCompletedToday && (
-            <div className="absolute -inset-1 bg-gradient-to-r from-orange-500 to-pink-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000 -z-10"></div>
+            <div className="absolute -inset-1 bg-gradient-to-r from-orange-500 to-yellow-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000 -z-10"></div>
         )}
       </div>
 
