@@ -4,86 +4,150 @@ import React, { useEffect, useState } from 'react';
 import { ref, onValue, push, update, remove } from 'firebase/database';
 import { db } from '../firebase/config';
 
-// --- Tipos para Tareas ---
+// --- Tipos ---
 interface Task {
   id: string;
   text: string;
   completed: boolean;
 }
 
-// --- Componente Calendario (Nuevo) ---
-const CalendarWidget = () => {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  
-  // Nombres de meses y días
-  const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-  const weekDays = ["L", "M", "X", "J", "V", "S", "D"];
+interface Note {
+  id: string;
+  text: string;
+  color: string;
+  rotation: number;
+}
 
-  // Cálculos de fecha
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  
-  // Ajustar para que la semana empiece en Lunes (0) en vez de Domingo
-  let startDay = new Date(year, month, 1).getDay(); 
-  startDay = startDay === 0 ? 6 : startDay - 1; 
+// --- Componente Tablón de Corcho (Corkboard) ---
+const CorkboardWidget = () => {
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [newNoteText, setNewNoteText] = useState('');
+  const [showInput, setShowInput] = useState(false);
 
-  const today = new Date();
-  const isCurrentMonth = today.getMonth() === month && today.getFullYear() === year;
+  // Colores tipo Post-it pastel
+  const noteColors = ['bg-yellow-200', 'bg-blue-200', 'bg-green-200', 'bg-pink-200', 'bg-orange-200'];
 
-  // Generar array de días (incluyendo espacios vacíos)
-  const daysArray = [];
-  for (let i = 0; i < startDay; i++) {
-    daysArray.push(null);
-  }
-  for (let i = 1; i <= daysInMonth; i++) {
-    daysArray.push(i);
-  }
+  // Cargar notas de Firebase
+  useEffect(() => {
+    const unsubscribe = onValue(ref(db, 'notes'), (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const list = Object.entries(data).map(([id, val]: any) => ({
+          id,
+          ...val
+        }));
+        setNotes(list);
+      } else {
+        setNotes([]);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Añadir nueva nota
+  const addNote = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newNoteText.trim()) return;
+
+    const randomColor = noteColors[Math.floor(Math.random() * noteColors.length)];
+    const randomRotation = Math.floor(Math.random() * 10) - 5; // Rotación sutil entre -5 y 5 grados
+
+    push(ref(db, 'notes'), {
+      text: newNoteText,
+      color: randomColor,
+      rotation: randomRotation,
+      createdAt: Date.now()
+    });
+    setNewNoteText('');
+    setShowInput(false);
+  };
+
+  // Borrar nota
+  const deleteNote = (id: string) => {
+    remove(ref(db, `notes/${id}`));
+  };
 
   return (
-    <div className="glass-card p-8 flex flex-col min-h-[300px] w-full">
-      <div className="flex justify-between items-center mb-6 px-2">
-        <h2 className="text-2xl font-bold text-white uppercase tracking-wider">
-          {months[month]} <span className="text-pink-400">{year}</span>
-        </h2>
-        <div className="text-white/50 text-sm font-medium">
-            Hoy es {today.getDate()}
+    <div className="relative w-full min-h-[400px] bg-[#d7c49e] rounded-xl border-[12px] border-[#8b5a2b] shadow-2xl p-6 overflow-hidden">
+      
+      {/* Título y Botón */}
+      <div className="flex justify-between items-center mb-8 relative z-10">
+        <div className="bg-[#fdfbf7] px-4 py-2 shadow-md transform -rotate-1">
+            <h2 className="text-xl font-black text-[#5d3a1a] uppercase tracking-widest border-b-2 border-[#5d3a1a]">
+            Tablón de Anuncios 📌
+            </h2>
         </div>
+        <button 
+          onClick={() => setShowInput(!showInput)}
+          className="bg-white text-[#8b5a2b] px-4 py-2 rounded-full font-bold shadow-md hover:scale-105 transition hover:bg-gray-50 border-2 border-[#8b5a2b]"
+        >
+          {showInput ? 'Cerrar' : '+ Nueva Nota'}
+        </button>
       </div>
 
-      <div className="grid grid-cols-7 gap-4 text-center">
-        {/* Cabecera Dias */}
-        {weekDays.map(day => (
-            <div key={day} className="text-gray-400 font-bold text-sm mb-2">{day}</div>
-        ))}
+      {/* Formulario Flotante para Añadir Nota */}
+      {showInput && (
+        <div className="absolute top-24 left-1/2 transform -translate-x-1/2 z-30 w-72 animate-in fade-in zoom-in duration-200">
+          <form onSubmit={addNote} className="bg-yellow-100 p-4 shadow-[0_10px_20px_rgba(0,0,0,0.3)] rotate-1 border-t-8 border-yellow-200/50">
+            <div className="w-4 h-4 rounded-full bg-red-600 mx-auto mb-3 shadow-[inset_0_-2px_4px_rgba(0,0,0,0.3)]"></div>
+            <textarea
+              autoFocus
+              className="w-full bg-transparent outline-none text-gray-800 text-lg resize-none placeholder-gray-500/50 font-medium h-32"
+              placeholder="Escribe algo importante..."
+              value={newNoteText}
+              onChange={e => setNewNoteText(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  addNote(e);
+                }
+              }}
+            />
+            <button type="submit" className="w-full mt-2 bg-[#8b5a2b] text-white text-sm font-bold py-2 rounded shadow hover:bg-[#6d4621] transition">
+              Pinchar Nota 📌
+            </button>
+          </form>
+        </div>
+      )}
 
-        {/* Días del mes */}
-        {daysArray.map((day, index) => {
-            const isToday = isCurrentMonth && day === today.getDate();
-            return (
-                <div key={index} className="flex justify-center items-center h-10">
-                    {day ? (
-                        <div className={`
-                            w-10 h-10 flex items-center justify-center rounded-xl text-sm font-bold transition-all duration-300
-                            ${isToday 
-                                ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg scale-110' 
-                                : 'text-white hover:bg-white/10'
-                            }
-                        `}>
-                            {day}
-                        </div>
-                    ) : (
-                        <span></span>
-                    )}
-                </div>
-            );
-        })}
+      {/* Grid de Notas (Post-its) */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        {notes.map((note) => (
+          <div 
+            key={note.id}
+            className={`relative p-5 shadow-[3px_3px_10px_rgba(0,0,0,0.15)] transition-transform hover:scale-105 duration-300 group ${note.color} min-h-[160px] flex items-center justify-center text-center`}
+            style={{ transform: `rotate(${note.rotation}deg)` }}
+          >
+            {/* Chincheta visual */}
+            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-red-600 rounded-full shadow-[2px_2px_4px_rgba(0,0,0,0.3)] z-10 border border-red-800"></div>
+            
+            <p className="text-gray-800 font-medium text-lg leading-snug break-words w-full">
+              {note.text}
+            </p>
+
+            {/* Botón borrar (visible al pasar el ratón) */}
+            <button 
+              onClick={(e) => { e.stopPropagation(); deleteNote(note.id); }}
+              className="absolute -bottom-2 -right-2 bg-red-500 text-white w-7 h-7 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all text-xs font-bold shadow-lg hover:bg-red-600 hover:scale-110 cursor-pointer"
+              title="Quitar nota"
+            >
+              ✕
+            </button>
+          </div>
+        ))}
+        
+        {notes.length === 0 && !showInput && (
+          <div className="col-span-full flex flex-col items-center justify-center text-[#8b5a2b]/30 mt-10 pointer-events-none select-none">
+            <p className="text-6xl mb-2">📌</p>
+            <p className="font-bold uppercase tracking-widest text-xl">El tablón está vacío</p>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-// --- Componente Lista de Tareas (Existente) ---
+// --- Componente Lista de Tareas (Reutilizable) ---
 const TodoCard = ({ title, dbPath, colorGradient }: { title: string, dbPath: string, colorGradient: string }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState('');
@@ -134,7 +198,7 @@ const TodoCard = ({ title, dbPath, colorGradient }: { title: string, dbPath: str
         <button type="submit" className="bg-white/20 hover:bg-white/30 rounded-lg px-3 py-2 transition">➕</button>
       </form>
 
-      <div className="flex-1 overflow-y-auto space-y-2 pr-1">
+      <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
         {tasks.length === 0 && <p className="text-white/50 text-sm text-center mt-10">No hay tareas pendientes</p>}
         {tasks.map((task) => (
           <div key={task.id} className="group flex items-center justify-between bg-black/20 p-2 rounded-lg hover:bg-black/30 transition">
@@ -170,8 +234,8 @@ export default function AgendaPage() {
 
   return (
     <div className="space-y-8">
-      {/* CALENDARIO */}
-      <CalendarWidget />
+      {/* TABLÓN DE ANUNCIOS (CORKBOARD) */}
+      <CorkboardWidget />
 
       {/* LISTAS DE TAREAS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
