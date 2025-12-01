@@ -13,6 +13,7 @@ import { auth, db } from '../../firebase/config';
 import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
+  // --- LÓGICA DE FIREBASE (INTACTA) ---
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -37,7 +38,7 @@ export default function LoginPage() {
         const snapshot = await get(child(dbRef, `usernames/${username.toLowerCase()}`));
 
         if (snapshot.exists()) {
-          throw new Error("Este nombre de usuario ya está ocupado.");
+          throw new Error("Ese usuario ya existe, pilla otro.");
         }
 
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -52,7 +53,7 @@ export default function LoginPage() {
         await sendEmailVerification(user);
         await signOut(auth);
 
-        setMessage(`¡Cuenta creada! Se ha enviado un correo a ${email}. Verifícalo.`);
+        setMessage(`¡Listo! Te hemos enviado un correo a ${email}. Confírmalo para entrar.`);
         setIsRegistering(false);
         setPassword('');
 
@@ -62,7 +63,7 @@ export default function LoginPage() {
         const snapshot = await get(child(dbRef, `usernames/${username.toLowerCase()}`));
 
         if (!snapshot.exists()) {
-          throw new Error("El nombre de usuario no existe.");
+          throw new Error("Ese usuario no existe.");
         }
 
         const registeredEmail = snapshot.val().email;
@@ -71,7 +72,7 @@ export default function LoginPage() {
 
         if (!user.emailVerified) {
           await signOut(auth);
-          throw new Error("Tu correo no ha sido verificado aún.");
+          throw new Error("¡Oye! Aún no has verificado tu correo.");
         }
 
         router.push('/');
@@ -79,51 +80,93 @@ export default function LoginPage() {
 
     } catch (err: any) {
       console.error(err);
-      if (err.message) setError(err.message);
-      else setError('Ocurrió un error desconocido.');
+      // Mensajes más informales
+      if (err.message.includes("ocupado") || err.message.includes("existe")) setError(err.message);
+      else if (err.code === 'auth/wrong-password') setError('Contraseña incorrecta. Inténtalo otra vez.');
+      else if (err.code === 'auth/email-already-in-use') setError('Ese correo ya está pillado.');
+      else setError('Error: ' + err.message);
     } finally {
       setLoading(false);
     }
   };
 
+  // --- NUEVO DISEÑO VISUAL (GLASSMORPHISM) ---
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900 px-4">
-      <div className="max-w-md w-full bg-white p-8 rounded-xl shadow-2xl">
-        <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">
-          {isRegistering ? 'Crear Cuenta' : 'Iniciar Sesión'}
-        </h2>
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="max-w-md w-full glass-card p-8 rounded-3xl shadow-2xl relative overflow-hidden">
         
-        {error && <p className="bg-red-100 text-red-700 p-3 rounded mb-4 text-sm border-l-4 border-red-500">{error}</p>}
-        {message && <p className="bg-green-100 text-green-800 p-3 rounded mb-4 text-sm border-l-4 border-green-500">{message}</p>}
+        {/* Decoración de fondo */}
+        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-pink-500 to-purple-600"></div>
 
-        <form onSubmit={handleAuth} className="space-y-4">
+        <h2 className="text-4xl font-black text-center mb-2 tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
+          CodeLink
+        </h2>
+        <p className="text-center text-gray-400 mb-8 text-sm uppercase tracking-widest">
+          {isRegistering ? 'Únete al equipo' : 'Acceso Restringido'}
+        </p>
+        
+        {error && <div className="bg-red-500/20 border border-red-500/50 text-red-200 p-3 rounded-xl mb-4 text-sm text-center font-medium backdrop-blur-sm">{error}</div>}
+        {message && <div className="bg-green-500/20 border border-green-500/50 text-green-200 p-3 rounded-xl mb-4 text-sm text-center font-medium backdrop-blur-sm">{message}</div>}
+
+        <form onSubmit={handleAuth} className="space-y-5">
+          
           <div>
-            <label className="block text-gray-700 text-sm font-bold mb-2">Nombre de Usuario</label>
-            <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="ej: marcos123" required />
+            <label className="block text-gray-300 text-xs font-bold mb-1 ml-1 uppercase">Usuario</label>
+            <input 
+              type="text" 
+              value={username} 
+              onChange={(e) => setUsername(e.target.value)} 
+              className="glass-input w-full p-4 rounded-xl" 
+              placeholder="Tu apodo" 
+              required 
+            />
           </div>
 
           {isRegistering && (
-            <div>
-              <label className="block text-gray-700 text-sm font-bold mb-2">Correo Electrónico</label>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="tu@email.com" required />
+            <div className="animate-fade-in-down">
+              <label className="block text-gray-300 text-xs font-bold mb-1 ml-1 uppercase">Email</label>
+              <input 
+                type="email" 
+                value={email} 
+                onChange={(e) => setEmail(e.target.value)} 
+                className="glass-input w-full p-4 rounded-xl" 
+                placeholder="correo@real.com" 
+                required 
+              />
             </div>
           )}
 
           <div>
-            <label className="block text-gray-700 text-sm font-bold mb-2">Contraseña</label>
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="******" required />
+            <label className="block text-gray-300 text-xs font-bold mb-1 ml-1 uppercase">Contraseña</label>
+            <input 
+              type="password" 
+              value={password} 
+              onChange={(e) => setPassword(e.target.value)} 
+              className="glass-input w-full p-4 rounded-xl" 
+              placeholder="••••••••" 
+              required 
+            />
           </div>
           
-          <button type="submit" disabled={loading} className={`w-full text-white font-bold py-3 rounded-lg transition shadow-lg ${loading ? 'bg-gray-400' : 'bg-pink-600 hover:bg-pink-700'}`}>
-            {loading ? 'Procesando...' : (isRegistering ? 'Crear Cuenta y Verificar' : 'Entrar')}
+          <button 
+            type="submit" 
+            disabled={loading} 
+            className={`w-full btn-neon py-4 rounded-xl shadow-lg mt-4 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+          >
+            {loading ? 'Cargando...' : (isRegistering ? 'Crear Cuenta' : 'Entrar')}
           </button>
         </form>
 
-        <div className="mt-6 text-center text-sm text-gray-600">
-          {isRegistering ? '¿Ya tienes cuenta?' : '¿No tienes cuenta?'}
-          <button type="button" onClick={() => { setIsRegistering(!isRegistering); setError(''); setMessage(''); }} className="text-pink-600 font-bold ml-1 hover:underline focus:outline-none">
-            {isRegistering ? 'Inicia Sesión' : 'Regístrate'}
-          </button>
+        <div className="mt-8 text-center text-sm">
+          <p className="text-gray-400">
+            {isRegistering ? '¿Ya estás dentro?' : '¿Eres nuevo?'}
+            <button 
+              onClick={() => { setIsRegistering(!isRegistering); setError(''); setMessage(''); }} 
+              className="text-pink-400 font-bold ml-2 hover:text-pink-300 hover:underline transition"
+            >
+              {isRegistering ? 'Inicia Sesión' : 'Regístrate'}
+            </button>
+          </p>
         </div>
       </div>
     </div>
