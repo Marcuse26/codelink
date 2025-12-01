@@ -2,56 +2,47 @@
 @tailwind components;
 @tailwind utilities;
 
-/* FONDO Y ESTILOS BASE */
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 26, 26, 46;
+  --background-end-rgb: 19, 19, 37;
+}
+
 body {
-  /* Fondo degradado animado y juvenil */
-  background-color: #1a1a2e;
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(236, 72, 153, 0.5) 0, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(124, 58, 237, 0.5) 0, transparent 50%),
-    radial-gradient(at 50% 50%, rgba(17, 24, 39, 1) 0, transparent 50%);
-  background-attachment: fixed;
-  background-size: cover;
-  color: #ffffff;
-  font-family: system-ui, -apple-system, sans-serif;
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom right,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
   min-height: 100vh;
+  /* Elimina scrollbar fea en webkit */
+  scrollbar-width: thin;
+  scrollbar-color: #4b5563 #1a1a2e;
 }
 
-/* CLASES DE CRISTAL (Glassmorphism) */
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #1a1a2e;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #4b5563;
+  border-radius: 20px;
+}
+
 .glass-card {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.glass-input {
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: white;
-  transition: all 0.3s ease;
-}
-
-.glass-input:focus {
-  background: rgba(0, 0, 0, 0.5);
-  border-color: #ec4899; /* Rosa neón */
-  outline: none;
-  box-shadow: 0 0 10px rgba(236, 72, 153, 0.3);
-}
-
-/* BOTONES */
-.btn-neon {
-  background: linear-gradient(45deg, #ec4899, #8b5cf6);
-  border: none;
-  color: white;
-  font-weight: bold;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.btn-neon:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(236, 72, 153, 0.4);
+/* Utilidad para inputs */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
