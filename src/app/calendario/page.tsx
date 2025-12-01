@@ -1,99 +1,95 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { ref, onValue } from 'firebase/database';
+import { db } from '../../firebase/config';
 
-// --- CONFIGURACIÓN CLAVE ---
-// FORMATO: 'YYYY-MM-DDTHH:MM:SS'
-const REUNION_DATE = new Date('2026-03-25T18:00:00'); 
-// --------------------------
-
-// Componente para el Tablón
-const Tablon = () => (
-  <div className="bg-white p-6 rounded-xl shadow-lg border-2 border-pink-200">
-    <h2 className="text-3xl font-bold text-pink-600 mb-4">✨ Nuestro Espacio Libre ✨</h2>
-    <p className="text-gray-600 mb-4">
-      Este es nuestro tablón personal. Aquí puedes pegar frases, enlaces a fotos o videos que quieras compartir.
-    </p>
-    
-    <h3 className="text-xl font-semibold text-gray-700 mb-2">Planes para el Reencuentro</h3>
-    <a href="https://trello.com/" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700 underline">
-      Ir al Tablero Compartido (Trello/Notion)
-    </a>
-  </div>
-);
-
-// Componentes auxiliares
 const TimeBox = ({ value, label }: { value: number, label: string }) => (
-  <div className="w-24 p-3 bg-pink-400 rounded-lg text-white">
-    <div className="text-5xl font-extrabold">{String(value).padStart(2, '0')}</div>
-    <div className="text-sm font-medium mt-1">{label}</div>
+  <div className="flex flex-col items-center">
+    <div className="w-20 h-24 sm:w-24 sm:h-28 glass-card flex items-center justify-center mb-2 bg-black/20 border-pink-500/20 rounded-2xl">
+      <span className="text-4xl sm:text-5xl font-black text-white">
+        {String(value).padStart(2, '0')}
+      </span>
+    </div>
+    <span className="text-xs font-bold uppercase tracking-widest text-pink-400">{label}</span>
   </div>
 );
 
-const CalendarLink = ({ label, href }: { label: string, href: string }) => (
-    <a href={href} className="flex-1 text-center block p-3 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition" target="_blank" rel="noopener noreferrer">
-        {label}
-    </a>
-);
-
-// Componente principal de la página
 export default function CalendarioPage() {
-  const [timeLeft, setTimeLeft] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-  });
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [targetDate, setTargetDate] = useState<string | null>(null);
+  const [names, setNames] = useState({ user1: 'Usuario 1', user2: 'Usuario 2' });
 
-  // Lógica del contador regresivo
   useEffect(() => {
+    const settingsRef = ref(db, 'settings');
+    const unsubscribe = onValue(settingsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        setTargetDate(data.reunionDate);
+        setNames({ user1: data.user1 || 'Usuario 1', user2: data.user2 || 'Usuario 2' });
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (!targetDate) return;
+
     const timer = setInterval(() => {
       const now = new Date().getTime();
-      const distance = REUNION_DATE.getTime() - now;
+      const reunion = new Date(targetDate).getTime();
+      const distance = reunion - now;
 
       if (distance < 0) {
-        clearInterval(timer);
         setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-        return;
+      } else {
+        setTimeLeft({
+          days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+          minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+          seconds: Math.floor((distance % (1000 * 60)) / 1000),
+        });
       }
-
-      setTimeLeft({
-        days: Math.floor(distance / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-        minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
-        seconds: Math.floor((distance % (1000 * 60)) / 1000),
-      });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
-
+  }, [targetDate]);
 
   return (
-    <div className="space-y-10">
-      <h1 className="text-4xl font-extrabold text-center text-gray-900">💖 ¡El Reencuentro se Acerca! 💖</h1>
-
-      {/* 1. CONTADOR REGRESIVO */}
-      <div className="text-center bg-pink-100 p-8 rounded-2xl shadow-xl">
-        <p className="text-lg font-semibold text-pink-700 mb-4">Faltan...</p>
-        <div className="flex justify-center space-x-6 text-gray-900">
-          <TimeBox value={timeLeft.days} label="Días" />
-          <TimeBox value={timeLeft.hours} label="Horas" />
-          <TimeBox value={timeLeft.minutes} label="Minutos" />
-          <TimeBox value={timeLeft.seconds} label="Segundos" />
-        </div>
+    <div className="flex flex-col items-center space-y-12 py-10">
+      
+      <div className="text-center space-y-2">
+        <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tight">
+          {names.user1} & {names.user2}
+        </h1>
+        <p className="text-gray-400 font-medium uppercase tracking-widest text-sm">Tiempo restante para el reencuentro</p>
       </div>
 
-      {/* 2. TABLÓN LIBRE */}
-      <Tablon />
-      
-      {/* 3. ENLACES A CALENDARIOS */}
-      <div className="bg-white p-6 rounded-xl shadow-lg">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">🔗 Enlaces Rápidos (Calendarios Apple)</h2>
-          <div className="flex space-x-6">
-            <CalendarLink label="Mi Calendario" href="#" />
-            <CalendarLink label="Su Calendario" href="#" />
-          </div>
+      {targetDate ? (
+        <div className="grid grid-cols-4 gap-4 sm:gap-6">
+          <TimeBox value={timeLeft.days} label="Días" />
+          <TimeBox value={timeLeft.hours} label="Horas" />
+          <TimeBox value={timeLeft.minutes} label="Mins" />
+          <TimeBox value={timeLeft.seconds} label="Segs" />
+        </div>
+      ) : (
+        <div className="glass-card p-6 text-center rounded-xl">
+          <p className="text-gray-300">Configura la fecha en Ajustes</p>
+        </div>
+      )}
+
+      <div className="w-full max-w-2xl glass-card p-8 relative overflow-hidden rounded-3xl group hover:border-pink-500/30 transition duration-500">
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-pink-500 to-purple-600"></div>
+        <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-white">
+          Tablón Compartido
+        </h2>
+        <p className="text-gray-400 mb-6 font-light">
+          Espacio libre para compartir notas o enlaces.
+        </p>
+        <div className="flex gap-4">
+           <button className="px-5 py-2 rounded-xl bg-white/5 hover:bg-white/10 transition text-sm font-medium text-white border border-white/10">Subir Foto</button>
+           <button className="px-5 py-2 rounded-xl bg-white/5 hover:bg-white/10 transition text-sm font-medium text-white border border-white/10">Nueva Nota</button>
+        </div>
       </div>
     </div>
   );
