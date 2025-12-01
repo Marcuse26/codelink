@@ -114,31 +114,45 @@ export default function HabitosPage() {
     <div className="space-y-8 py-6">
       <h1 className="text-3xl font-bold text-gray-800 text-center">✅ Hábitos Diarios</h1>
       
-      {/* Inputs */}
+      {/* Inputs - Ahora con fondo claro */}
       <div className="grid grid-cols-2 gap-6">
         {/* Input 1 */}
-        <div className="bg-[#1a1a2e] p-6 rounded-3xl border border-white/10 text-center shadow-lg" style={{ borderColor: `${config.color1}40`, boxShadow: `0 0 20px ${config.color1}20` }}>
+        <div 
+            className="bg-[#fdfbf7] p-6 rounded-3xl border border-gray-200 text-center shadow-lg transition-shadow" 
+            style={{ 
+                borderColor: `${config.color1}40`, 
+                boxShadow: `0 4px 20px ${config.color1}15` 
+            }}
+        >
             <p className="font-bold uppercase tracking-wider text-sm mb-3" style={{ color: config.color1 }}>{config.user1}</p>
             <div className="relative w-fit mx-auto">
                 <input 
                     type="number" 
                     value={todayValues.user1.toString()} 
                     onChange={(e) => handleInputChange('user1', e.target.value)}
-                    className="bg-transparent text-6xl font-black text-white w-32 text-center outline-none focus:scale-110 transition-transform" 
+                    // Cambio: text-white -> text-gray-800
+                    className="bg-transparent text-6xl font-black text-gray-800 w-32 text-center outline-none focus:scale-110 transition-transform" 
                 />
                 <span className="absolute top-0 -right-4 text-xl" style={{ color: config.color1 }}>%</span>
             </div>
         </div>
 
         {/* Input 2 */}
-        <div className="bg-[#1a1a2e] p-6 rounded-3xl border border-white/10 text-center shadow-lg" style={{ borderColor: `${config.color2}40`, boxShadow: `0 0 20px ${config.color2}20` }}>
+        <div 
+            className="bg-[#fdfbf7] p-6 rounded-3xl border border-gray-200 text-center shadow-lg transition-shadow" 
+            style={{ 
+                borderColor: `${config.color2}40`, 
+                boxShadow: `0 4px 20px ${config.color2}15` 
+            }}
+        >
             <p className="font-bold uppercase tracking-wider text-sm mb-3" style={{ color: config.color2 }}>{config.user2}</p>
             <div className="relative w-fit mx-auto">
                 <input 
                     type="number" 
                     value={todayValues.user2.toString()} 
                     onChange={(e) => handleInputChange('user2', e.target.value)}
-                    className="bg-transparent text-6xl font-black text-white w-32 text-center outline-none focus:scale-110 transition-transform" 
+                    // Cambio: text-white -> text-gray-800
+                    className="bg-transparent text-6xl font-black text-gray-800 w-32 text-center outline-none focus:scale-110 transition-transform" 
                 />
                 <span className="absolute top-0 -right-4 text-xl" style={{ color: config.color2 }}>%</span>
             </div>
@@ -163,7 +177,6 @@ export default function HabitosPage() {
                 </linearGradient>
               </defs>
               
-              {/* Rejilla más oscura para verse en fondo claro */}
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
               
               <XAxis 
