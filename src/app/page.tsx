@@ -18,7 +18,7 @@ interface Note {
   rotation: number;
 }
 
-// --- Componente Tablón de Corcho (Sin cambios en lógica) ---
+// --- Componente Tablón de Corcho ---
 const CorkboardWidget = () => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [newNoteText, setNewNoteText] = useState('');
@@ -135,7 +135,7 @@ const TodoCard = ({ title, dbPath, userColor }: { title: string, dbPath: string,
       </form>
 
       <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
-        {tasks.length === 0 && <p className="text-white/40 text-sm text-center mt-10 italic">Todo limpio ✨</p>}
+        {/* Eliminado mensaje 'Todo limpio' */}
         {tasks.map((task) => (
           <div key={task.id} className="group flex items-center justify-between bg-black/20 p-2 rounded-lg hover:bg-black/30 transition backdrop-blur-md border border-white/5">
             <div onClick={() => toggleTask(task)} className="flex items-center gap-3 cursor-pointer flex-1">
