@@ -47,25 +47,66 @@ export default function CalendarioPage() {
     return () => clearInterval(timer);
   }, [config.reunionDate]);
 
+  // Helper para añadir el cero delante (05, 09...)
+  const f = (n: number) => n < 10 ? `0${n}` : n;
+
   return (
-    <div className="flex flex-col items-center justify-center space-y-12 py-10 w-full">
+    <div className="flex flex-col items-center justify-center space-y-10 py-10 w-full">
       
       {/* Título */}
       <h1 className="text-3xl font-black text-gray-800 uppercase tracking-widest text-center">
         Tiempo Restante
       </h1>
 
-      {/* CONTADOR HORIZONTAL PREMIUM */}
-      <div className="bg-white rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-gray-100 p-8 flex flex-wrap md:flex-nowrap items-center justify-center gap-4 md:gap-0 w-full max-w-5xl mx-auto transform hover:scale-[1.01] transition-transform duration-500">
+      {/* CONTADOR REDISEÑADO */}
+      <div className="bg-white rounded-[2.5rem] shadow-xl border border-gray-200 p-10 flex flex-col items-center justify-center w-full max-w-2xl mx-auto transform hover:scale-[1.01] transition-transform duration-500">
         
-        <TimeUnit value={timeLeft.days} label="Días" />
-        <Separator />
-        <TimeUnit value={timeLeft.hours} label="Horas" />
-        <Separator />
-        <TimeUnit value={timeLeft.minutes} label="Minutos" />
-        <Separator />
-        <TimeUnit value={timeLeft.seconds} label="Segundos" isLast />
+        {/* PARTE SUPERIOR: DÍAS */}
+        <div className="flex flex-col items-center mb-8">
+            {/* Color sólido gris oscuro para asegurar visibilidad */}
+            <span className="text-9xl font-black text-gray-900 leading-none tracking-tighter">
+                {timeLeft.days}
+            </span>
+            <span className="text-2xl font-bold text-gray-400 tracking-[0.5em] uppercase mt-2 pl-2">
+                Días
+            </span>
+        </div>
 
+        {/* Separador */}
+        <div className="w-2/3 h-1 bg-gray-100 rounded-full mb-8"></div>
+
+        {/* PARTE INFERIOR: HH:MM:SS */}
+        <div className="flex items-center gap-4 md:gap-8">
+            
+            {/* Horas */}
+            <div className="flex flex-col items-center">
+                <span className="text-5xl font-bold text-gray-800 tabular-nums">
+                    {f(timeLeft.hours)}
+                </span>
+                <span className="text-xs text-gray-400 font-bold uppercase tracking-wider mt-1">Horas</span>
+            </div>
+
+            <span className="text-4xl text-gray-300 -mt-4">:</span>
+
+            {/* Minutos */}
+            <div className="flex flex-col items-center">
+                <span className="text-5xl font-bold text-gray-800 tabular-nums">
+                    {f(timeLeft.minutes)}
+                </span>
+                <span className="text-xs text-gray-400 font-bold uppercase tracking-wider mt-1">Min</span>
+            </div>
+
+            <span className="text-4xl text-gray-300 -mt-4">:</span>
+
+            {/* Segundos */}
+            <div className="flex flex-col items-center">
+                <span className="text-5xl font-bold text-gray-800 tabular-nums">
+                    {f(timeLeft.seconds)}
+                </span>
+                <span className="text-xs text-gray-400 font-bold uppercase tracking-wider mt-1">Seg</span>
+            </div>
+
+        </div>
       </div>
 
       {/* ENLACES A CALENDARIOS */}
@@ -77,8 +118,8 @@ export default function CalendarioPage() {
             className="flex items-center gap-4 p-5 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all group"
         >
             <div className="bg-blue-100 p-3 rounded-xl text-2xl group-hover:scale-110 transition-transform">📅</div>
-            <div>
-                <span className="block font-bold text-gray-800 text-lg">Calendario de {config.user1}</span>
+            <div className="overflow-hidden">
+                <span className="block font-bold text-gray-800 text-lg truncate">Calendario de {config.user1}</span>
                 <span className="text-xs text-gray-500 font-medium uppercase tracking-wider">Ver Planificación</span>
             </div>
         </a>
@@ -90,8 +131,8 @@ export default function CalendarioPage() {
             className="flex items-center gap-4 p-5 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all group"
         >
             <div className="bg-pink-100 p-3 rounded-xl text-2xl group-hover:scale-110 transition-transform">📅</div>
-            <div>
-                <span className="block font-bold text-gray-800 text-lg">Calendario de {config.user2}</span>
+            <div className="overflow-hidden">
+                <span className="block font-bold text-gray-800 text-lg truncate">Calendario de {config.user2}</span>
                 <span className="text-xs text-gray-500 font-medium uppercase tracking-wider">Ver Planificación</span>
             </div>
         </a>
@@ -100,20 +141,3 @@ export default function CalendarioPage() {
     </div>
   );
 }
-
-// --- Componentes Auxiliares ---
-
-const TimeUnit = ({ value, label, isLast }: { value: number, label: string, isLast?: boolean }) => (
-    <div className="flex flex-col items-center px-4 md:px-8 py-2 min-w-[120px]">
-        <span className="text-5xl md:text-7xl font-black bg-gradient-to-b from-gray-800 to-gray-600 bg-clip-text text-transparent tabular-nums leading-none tracking-tight">
-            {value < 10 ? `0${value}` : value}
-        </span>
-        <span className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-[0.3em] mt-3">
-            {label}
-        </span>
-    </div>
-);
-
-const Separator = () => (
-    <div className="hidden md:block w-px h-16 bg-gradient-to-b from-transparent via-gray-200 to-transparent mx-2"></div>
-);
