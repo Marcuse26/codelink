@@ -1,42 +1,72 @@
 'use client';
 
-import React from 'react';
-// CORRECCIÓN: Usamos ruta relativa para evitar errores de alias
-import { RachaData } from '../../data/racha';
+import React, { useState } from 'react';
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
+} from 'recharts';
+// Usamos datos dummy si no hay datos reales
+import { habitosData } from '../../data/habitos';
 
-export default function DeportePage() {
-    // Valores por defecto por si el archivo de datos falla
-    const miRacha = RachaData?.miRacha || 0;
-    const suRacha = RachaData?.suRacha || 0;
-    const rachaConjunta = miRacha + suRacha; 
-
-    const handleStreakUpdate = (user: string) => {
-        alert(`¡Racha de ${user} activada! Recuerda editar el archivo src/data/racha.ts para guardar el cambio.`);
+const PorcentajeInput = ({ label, initialValue, color }: { label: string, initialValue: number, color: string }) => {
+    const [percentage, setPercentage] = useState(initialValue);
+    
+    // Aquí iría la lógica para guardar en Firebase
+    const handleChange = (val: string) => {
+        const num = Math.min(100, Math.max(0, Number(val)));
+        setPercentage(num);
     };
 
     return (
-        <div className="space-y-10">
-            <h1 className="text-4xl font-extrabold text-center text-gray-900">🏃 Rendimiento Deportivo (Strava)</h1>
-            
-            {/* Racha Conjunta */}
-            <div className="text-center bg-green-100 p-8 rounded-2xl shadow-xl border-t-4 border-green-500">
-                <p className="text-lg font-semibold text-green-700 mb-2">Días de Deporte Juntos</p>
-                <div className="text-7xl font-extrabold text-green-900">{rachaConjunta}</div>
-                <p className="text-xl font-medium text-gray-600 mt-2">Días de racha acumulados en total.</p>
+        <div className={`glass-card p-6 rounded-2xl border-t-4 ${color === 'blue' ? 'border-blue-500' : 'border-pink-500'}`}>
+            <h3 className={`text-sm font-bold uppercase tracking-widest mb-4 ${color === 'blue' ? 'text-blue-400' : 'text-pink-400'}`}>{label}</h3>
+            <div className="flex items-end gap-2">
+                <input 
+                    type="number" 
+                    value={percentage} 
+                    onChange={(e) => handleChange(e.target.value)} 
+                    className="w-24 bg-black/30 border border-white/10 text-4xl font-bold text-white rounded-xl p-2 text-center focus:outline-none focus:border-white/30" 
+                />
+                <span className="text-xl text-gray-500 font-bold mb-2">%</span>
             </div>
-
-            {/* Marcas de Racha Individuales */}
-            <div className="flex justify-around">
-                <div className="w-5/12 bg-white p-6 rounded-xl shadow-lg border-l-4 border-blue-500">
-                    <h2 className="text-3xl font-bold text-gray-800 mb-3">Mi Racha: {miRacha} días</h2>
-                    <button onClick={() => handleStreakUpdate("MÍO")} className="w-full py-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition">Activar Racha</button>
-                </div>
-
-                <div className="w-5/12 bg-white p-6 rounded-xl shadow-lg border-l-4 border-red-500">
-                    <h2 className="text-3xl font-bold text-gray-800 mb-3">Su Racha: {suRacha} días</h2>
-                     <button onClick={() => handleStreakUpdate("SUYO")} className="w-full py-3 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition">Activar Racha</button>
-                </div>
-            </div>
+            <p className="text-xs text-gray-500 mt-2">Cumplimiento hoy</p>
         </div>
     );
+};
+
+export default function HabitosPage() {
+  return (
+    <div className="space-y-10 py-6">
+      <header className="text-center space-y-2">
+        <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">
+          ✅ Hábitos y Bienestar
+        </h1>
+        <p className="text-gray-400 text-sm uppercase tracking-widest">Construyendo disciplina juntos</p>
+      </header>
+
+      <div className="grid grid-cols-2 gap-6">
+        <PorcentajeInput label="Mi Progreso" initialValue={75} color="blue" />
+        <PorcentajeInput label="Su Progreso" initialValue={90} color="pink" />
+      </div>
+
+      <div className="glass-card p-6 rounded-3xl h-96 relative">
+        <h2 className="text-white font-bold mb-6 flex items-center gap-2">
+            <span className="text-xl">📈</span> Tendencia Semanal
+        </h2>
+        <ResponsiveContainer width="100%" height="85%">
+          <LineChart data={habitosData}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
+            <XAxis dataKey="dia" stroke="#9ca3af" tick={{fill: '#9ca3af'}} />
+            <YAxis domain={[0, 100]} stroke="#9ca3af" tick={{fill: '#9ca3af'}} />
+            <Tooltip 
+                contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '12px', color: '#fff' }}
+                itemStyle={{ color: '#fff' }}
+            />
+            <Legend />
+            <Line type="monotone" dataKey="yo" stroke="#3b82f6" strokeWidth={4} name="Yo" dot={{fill: '#3b82f6', r: 4}} activeDot={{r: 8}} />
+            <Line type="monotone" dataKey="ella" stroke="#ec4899" strokeWidth={4} name="Ella" dot={{fill: '#ec4899', r: 4}} activeDot={{r: 8}} />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
 }

@@ -1,20 +1,18 @@
-// src/firebase/config.ts
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDkG4V4zKRMNHcpaeWRNDIFjwhXgP9YO8Q",
-  authDomain: "codelink-af067.firebaseapp.com",
-  projectId: "codelink-af067",
-  storageBucket: "codelink-af067.firebasestorage.app",
-  messagingSenderId: "147375276218",
-  appId: "1:147375276218:web:d6040312600790347b8283",
-  measurementId: "G-1NDKVXS63B"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-
-// Inicializar Firebase (evita reinicializar si ya existe)
+// Inicializar Firebase (singleton para evitar reinicios)
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
 const auth = getAuth(app);

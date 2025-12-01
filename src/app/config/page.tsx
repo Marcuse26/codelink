@@ -1,10 +1,8 @@
-// src/app/config/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ref, set, onValue } from 'firebase/database';
-// Asegúrate de que esta importación apunte al archivo que crearemos en el Paso 2
-import { db } from '../../firebase/config'; 
+import { db } from '../../firebase/config';
 
 export default function ConfigPage() {
   const [name1, setName1] = useState('');
@@ -15,7 +13,7 @@ export default function ConfigPage() {
 
   useEffect(() => {
     const settingsRef = ref(db, 'settings');
-    onValue(settingsRef, (snapshot) => {
+    const unsubscribe = onValue(settingsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
         setName1(data.user1 || '');
@@ -23,6 +21,7 @@ export default function ConfigPage() {
         setDate(data.reunionDate || '');
       }
     });
+    return () => unsubscribe();
   }, []);
 
   const handleSave = async (e: React.FormEvent) => {
@@ -36,10 +35,10 @@ export default function ConfigPage() {
         user2: name2,
         reunionDate: date
       });
-      setMsg('Cambios guardados correctamente.');
+      setMsg('✅ Configuración actualizada correctamente.');
     } catch (error) {
       console.error(error);
-      setMsg('Error al guardar.');
+      setMsg('❌ Error al guardar.');
     } finally {
       setLoading(false);
     }
@@ -48,47 +47,44 @@ export default function ConfigPage() {
   return (
     <div className="max-w-md mx-auto space-y-8 pt-10">
       <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold text-white">
-          Configuración
-        </h1>
-        <p className="text-gray-400 text-sm">Personaliza los datos de la aplicación</p>
+        <h1 className="text-3xl font-bold text-white">⚙️ Ajustes</h1>
+        <p className="text-gray-400 text-sm">Personaliza vuestra experiencia</p>
       </div>
 
       <form onSubmit={handleSave} className="glass-card p-8 rounded-3xl space-y-6">
-        
         <div className="space-y-4">
-          <label className="block text-xs font-bold text-pink-400 uppercase tracking-wider">Nombres de Usuario</label>
+          <label className="block text-xs font-bold text-pink-400 uppercase tracking-wider">Nuestros Nombres</label>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-xs mb-2 text-gray-500">Usuario 1</p>
+              <p className="text-xs mb-2 text-gray-500">Tú</p>
               <input 
                 type="text" 
                 value={name1}
                 onChange={(e) => setName1(e.target.value)}
                 className="glass-input w-full p-3 text-center rounded-xl"
-                placeholder="Nombre"
+                placeholder="Nombre 1"
               />
             </div>
             <div>
-              <p className="text-xs mb-2 text-gray-500">Usuario 2</p>
+              <p className="text-xs mb-2 text-gray-500">Ella/Él</p>
               <input 
                 type="text" 
                 value={name2}
                 onChange={(e) => setName2(e.target.value)}
                 className="glass-input w-full p-3 text-center rounded-xl"
-                placeholder="Nombre"
+                placeholder="Nombre 2"
               />
             </div>
           </div>
         </div>
 
         <div className="space-y-2">
-           <label className="block text-xs font-bold text-pink-400 uppercase tracking-wider">Fecha del Reencuentro</label>
+           <label className="block text-xs font-bold text-pink-400 uppercase tracking-wider">Próximo Reencuentro</label>
            <input 
              type="datetime-local" 
              value={date}
              onChange={(e) => setDate(e.target.value)}
-             className="glass-input w-full p-4 text-lg rounded-xl text-center"
+             className="glass-input w-full p-4 text-lg rounded-xl text-center text-white/90"
            />
         </div>
 
