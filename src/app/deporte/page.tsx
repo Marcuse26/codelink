@@ -32,29 +32,30 @@ export default function DeportePage() {
   }, []);
 
   // Calcular racha visual
+  // Si la última fecha no fue ni ayer ni hoy, visualmente es 0 (se rompió)
   const currentStreak = () => {
     if (!streakData.lastDate) return 0;
     if (streakData.lastDate === today) return streakData.count;
     if (streakData.lastDate === yesterday) return streakData.count;
-    return 0; // Si se rompió la racha hace más de un día, mostramos 0
+    return 0; 
   };
 
   const isCompletedToday = streakData.lastDate === today;
 
   // Manejar click
   const handleStreak = () => {
-    // CAMBIO AQUI: Valor inicial por defecto es 0 si se reinicia
-    let newCount = 0; 
+    // CORRECCIÓN: Si empezamos una nueva racha, el valor es 1 (no 0)
+    let newCount = 1; 
 
-    // Solo sumamos si la última vez fue AYER (continuidad)
+    // Si la última vez fue AYER, mantenemos la racha y sumamos 1
     if (streakData.lastDate === yesterday) {
       newCount = streakData.count + 1;
     } 
-    // Si ya es hoy, no hacemos nada (protección extra)
+    // Si ya es hoy, no hacemos nada (protección)
     else if (streakData.lastDate === today) {
       return; 
     }
-    // Si la fecha es vieja (racha rota), newCount se mantiene en 0 (Reset pedido)
+    // Si la racha estaba rota (fecha antigua), newCount se queda en 1 (Empezar de nuevo)
 
     set(ref(db, 'streak'), {
       count: newCount,
