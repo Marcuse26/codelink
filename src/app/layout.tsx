@@ -57,17 +57,16 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
           <h2 className="mb-3 px-3 text-xs font-bold uppercase tracking-widest text-gray-500">General</h2>
           <nav className="space-y-1">
-            <SidebarLink href="/" active={pathname === '/'} icon={<Icons.Academic />} label="Académico" />
-            {/* CAMBIO AQUI: Deporte antes que Hábitos */}
-            <SidebarLink href="/deporte" active={pathname === '/deporte'} icon={<Icons.Sport />} label="Deporte" />
-            <SidebarLink href="/habitos" active={pathname === '/habitos'} icon={<Icons.Habits />} label="Hábitos" />
-            {/* CAMBIO AQUI: Nosotros renombrado a Planing */}
-            <SidebarLink href="/calendario" active={pathname === '/calendario'} icon={<Icons.Heart />} label="Planing" />
+            {/* TEXTOS EN MAYÚSCULAS */}
+            <SidebarLink href="/" active={pathname === '/'} icon={<Icons.Academic />} label="ACADÉMICO" />
+            <SidebarLink href="/deporte" active={pathname === '/deporte'} icon={<Icons.Sport />} label="DEPORTE" />
+            <SidebarLink href="/habitos" active={pathname === '/habitos'} icon={<Icons.Habits />} label="HÁBITOS" />
+            <SidebarLink href="/calendario" active={pathname === '/calendario'} icon={<Icons.Heart />} label="PLANING" />
           </nav>
 
           <h2 className="mb-3 mt-6 px-3 text-xs font-bold uppercase tracking-widest text-gray-500">Configuración</h2>
           <nav className="space-y-1">
-             <SidebarLink href="/config" active={pathname === '/config'} icon={<Icons.Settings />} label="Ajustes" />
+             <SidebarLink href="/config" active={pathname === '/config'} icon={<Icons.Settings />} label="AJUSTES" />
           </nav>
         </div>
 
@@ -82,14 +81,14 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
       <main className="flex flex-1 flex-col overflow-hidden bg-[#f0f2f5]">
         <header className="flex h-[80px] shrink-0 items-center justify-between border-b border-[#e9ecef] bg-white px-8">
           <h1 className="text-2xl font-bold text-[#212529]">
-            {/* CAMBIO AQUI: Títulos actualizados */}
-            {pathname === '/' ? 'Académico' : 
-             pathname === '/habitos' ? 'Hábitos' : 
-             pathname === '/deporte' ? 'Deporte' : 
-             pathname === '/calendario' ? 'Planing' : 'Ajustes'}
+            {/* TÍTULOS EN MAYÚSCULAS Y SIN EMOJIS */}
+            {pathname === '/' ? 'ACADÉMICO' : 
+             pathname === '/habitos' ? 'HÁBITOS' : 
+             pathname === '/deporte' ? 'DEPORTE' : 
+             pathname === '/calendario' ? 'PLANING' : 'AJUSTES'}
           </h1>
           <button onClick={() => signOut(auth)} className="flex items-center gap-2 rounded-lg bg-red-50 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-100">
-            <Icons.Logout /> Salir
+            <Icons.Logout /> SALIR
           </button>
         </header>
 

@@ -62,16 +62,17 @@ const CorkboardWidget = () => {
     <div className="relative w-full min-h-[400px] bg-[#d7c49e] rounded-xl border-[12px] border-[#8b5a2b] shadow-2xl p-6 overflow-hidden flex flex-col">
       <div className="flex justify-between items-center mb-6 relative z-10 shrink-0">
         <div className="bg-[#fdfbf7] px-4 py-2 shadow-md transform -rotate-1">
-            <h2 className="text-xl font-black text-[#5d3a1a] uppercase tracking-widest border-b-2 border-[#5d3a1a]">Tablón ({notes.length}) 📌</h2>
+            {/* TÍTULO LIMPIO SIN EMOJIS */}
+            <h2 className="text-xl font-black text-[#5d3a1a] uppercase tracking-widest border-b-2 border-[#5d3a1a]">TABLÓN ({notes.length})</h2>
         </div>
-        <button onClick={() => setShowInput(!showInput)} className="bg-white text-[#8b5a2b] px-4 py-2 rounded-full font-bold shadow-md hover:scale-105 transition hover:bg-gray-50 border-2 border-[#8b5a2b]">{showInput ? 'Cerrar' : '+ Nota'}</button>
+        <button onClick={() => setShowInput(!showInput)} className="bg-white text-[#8b5a2b] px-4 py-2 rounded-full font-bold shadow-md hover:scale-105 transition hover:bg-gray-50 border-2 border-[#8b5a2b]">{showInput ? 'CERRAR' : '+ NOTA'}</button>
       </div>
       {showInput && (
         <div className="absolute top-24 left-1/2 transform -translate-x-1/2 z-30 w-72 animate-in fade-in zoom-in duration-200">
           <form onSubmit={addNote} className="bg-yellow-100 p-4 shadow-[0_10px_20px_rgba(0,0,0,0.3)] rotate-1 border-t-8 border-yellow-200/50">
             <div className="w-4 h-4 rounded-full bg-red-600 mx-auto mb-3 shadow-[inset_0_-2px_4px_rgba(0,0,0,0.3)]"></div>
             <textarea autoFocus className="w-full bg-transparent outline-none text-gray-800 text-lg resize-none placeholder-gray-500/50 font-medium h-32" placeholder="Escribe algo..." value={newNoteText} onChange={e => setNewNoteText(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); addNote(e); } }} />
-            <button type="submit" className="w-full mt-2 bg-[#8b5a2b] text-white text-sm font-bold py-2 rounded shadow hover:bg-[#6d4621] transition">Pinchar Nota 📌</button>
+            <button type="submit" className="w-full mt-2 bg-[#8b5a2b] text-white text-sm font-bold py-2 rounded shadow hover:bg-[#6d4621] transition">FIJAR NOTA</button>
           </form>
         </div>
       )}
@@ -85,13 +86,13 @@ const CorkboardWidget = () => {
         ))}
       </div>
       {notes.length === 0 && !showInput && (
-        <div className="flex-1 flex flex-col items-center justify-center text-[#8b5a2b]/30 pointer-events-none select-none min-h-[200px]"><p className="text-6xl mb-2">📌</p><p className="font-bold uppercase tracking-widest text-xl">Vacío</p></div>
+        <div className="flex-1 flex flex-col items-center justify-center text-[#8b5a2b]/30 pointer-events-none select-none min-h-[200px]"><p className="text-6xl mb-2">📌</p><p className="font-bold uppercase tracking-widest text-xl">VACÍO</p></div>
       )}
     </div>
   );
 };
 
-// --- Componente Lista de Tareas (Con Color Personalizado) ---
+// --- Componente Lista de Tareas ---
 const TodoCard = ({ title, dbPath, userColor }: { title: string, dbPath: string, userColor: string }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState('');
@@ -121,70 +122,4 @@ const TodoCard = ({ title, dbPath, userColor }: { title: string, dbPath: string,
 
   return (
     <div 
-        className="p-6 rounded-2xl text-white shadow-lg flex flex-col h-[400px] border border-white/5"
-        style={{ 
-            background: `linear-gradient(145deg, ${userColor}, #0f0f1a)`,
-            boxShadow: `0 10px 30px -10px ${userColor}60`
-        }}
-    >
-      <h3 className="text-2xl font-bold mb-4 border-b border-white/20 pb-2">Tareas de {title}</h3>
-      
-      <form onSubmit={addTask} className="flex gap-2 mb-4">
-        <input type="text" value={newTask} onChange={(e) => setNewTask(e.target.value)} placeholder="Nueva tarea..." className="w-full bg-black/20 placeholder-white/50 text-white rounded-lg px-3 py-2 outline-none focus:bg-black/40 transition text-sm backdrop-blur-sm" />
-        <button type="submit" className="bg-white/20 hover:bg-white/30 rounded-lg px-3 py-2 transition">➕</button>
-      </form>
-
-      <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
-        {/* Eliminado mensaje 'Todo limpio' */}
-        {tasks.map((task) => (
-          <div key={task.id} className="group flex items-center justify-between bg-black/20 p-2 rounded-lg hover:bg-black/30 transition backdrop-blur-md border border-white/5">
-            <div onClick={() => toggleTask(task)} className="flex items-center gap-3 cursor-pointer flex-1">
-              <div className={`w-5 h-5 rounded border border-white/50 flex items-center justify-center transition-colors ${task.completed ? 'bg-white text-black' : 'bg-transparent'}`}>
-                {task.completed && <span className="text-xs font-bold">✓</span>}
-              </div>
-              <span className={`text-sm ${task.completed ? 'line-through text-white/50' : 'text-white'}`}>{task.text}</span>
-            </div>
-            <button onClick={() => deleteTask(task.id)} className="text-white/40 hover:text-red-300 opacity-0 group-hover:opacity-100 transition px-2">✕</button>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-export default function AgendaPage() {
-  const [config, setConfig] = useState({ 
-    user1: 'Usuario 1', 
-    user2: 'Usuario 2', 
-    color1: '#3b82f6', 
-    color2: '#ec4899' 
-  });
-
-  useEffect(() => {
-    const unsubscribe = onValue(ref(db, 'settings'), (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-            setConfig({
-                user1: data.user1 || 'Usuario 1',
-                user2: data.user2 || 'Usuario 2',
-                color1: data.color1 || '#3b82f6',
-                color2: data.color2 || '#ec4899'
-            });
-        }
-    });
-    return () => unsubscribe();
-  }, []);
-
-  return (
-    <div className="space-y-8">
-      {/* TABLÓN DE ANUNCIOS */}
-      <CorkboardWidget />
-
-      {/* LISTAS DE TAREAS DINÁMICAS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <TodoCard title={config.user1} dbPath="tasks/user1" userColor={config.color1} />
-        <TodoCard title={config.user2} dbPath="tasks/user2" userColor={config.color2} />
-      </div>
-    </div>
-  );
-}
+        className="p-6 rounded-2xl text-white shadow-lg flex flex-col h-[400px] border
