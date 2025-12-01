@@ -3,7 +3,7 @@ import { getAuth } from "firebase/auth";
 import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "mock_key_for_build",
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
   databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
@@ -12,10 +12,11 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Inicializar Firebase (singleton)
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+// Inicializar Firebase de forma segura para el Build de Vercel
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
-const auth = getAuth(app);
-const db = getDatabase(app);
+// Evitamos errores si se ejecuta en el servidor durante el build
+const auth = typeof window !== "undefined" ? getAuth(app) : ({} as any);
+const db = typeof window !== "undefined" ? getDatabase(app) : ({} as any);
 
 export { auth, db };
