@@ -32,7 +32,6 @@ export default function DeportePage() {
   }, []);
 
   // Calcular racha visual
-  // Si la última fecha no fue ni ayer ni hoy, visualmente es 0 (se rompió)
   const currentStreak = () => {
     if (!streakData.lastDate) return 0;
     if (streakData.lastDate === today) return streakData.count;
@@ -42,24 +41,35 @@ export default function DeportePage() {
 
   const isCompletedToday = streakData.lastDate === today;
 
-  // Manejar click
+  // Manejar click (Completar)
   const handleStreak = () => {
-    // CORRECCIÓN: Si empezamos una nueva racha, el valor es 1 (no 0)
     let newCount = 1; 
 
     // Si la última vez fue AYER, mantenemos la racha y sumamos 1
     if (streakData.lastDate === yesterday) {
       newCount = streakData.count + 1;
-    } 
-    // Si ya es hoy, no hacemos nada (protección)
-    else if (streakData.lastDate === today) {
+    } else if (streakData.lastDate === today) {
       return; 
     }
-    // Si la racha estaba rota (fecha antigua), newCount se queda en 1 (Empezar de nuevo)
+    // Si la racha estaba rota, newCount se queda en 1
 
     set(ref(db, 'streak'), {
       count: newCount,
       lastDate: today
+    });
+  };
+
+  // Manejar Deshacer (Cancelar)
+  const handleUndo = () => {
+    if (!isCompletedToday) return;
+
+    // Restamos 1, pero nunca bajamos de 0
+    const newCount = Math.max(0, streakData.count - 1);
+    
+    // Ponemos la fecha a "ayer" para que el botón principal se reactive
+    set(ref(db, 'streak'), {
+        count: newCount,
+        lastDate: yesterday
     });
   };
 
@@ -81,7 +91,7 @@ export default function DeportePage() {
       </div>
 
       {/* Botón de Acción */}
-      <div className="relative group">
+      <div className="relative group space-y-4">
         <button 
             onClick={handleStreak}
             disabled={isCompletedToday || loading}
@@ -95,6 +105,16 @@ export default function DeportePage() {
         >
             {loading ? 'Cargando...' : isCompletedToday ? '✅ ¡Objetivo Cumplido!' : '🔥 ¡Hemos Entrenado!'}
         </button>
+        
+        {/* Botón de Cancelar (Solo visible si se ha completado hoy) */}
+        {isCompletedToday && (
+            <button 
+                onClick={handleUndo}
+                className="text-red-500 text-sm font-bold hover:text-red-700 hover:underline transition-all"
+            >
+                ❌ Me he equivocado, deshacer.
+            </button>
+        )}
         
         {/* Efecto decorativo si no está completado */}
         {!isCompletedToday && (
