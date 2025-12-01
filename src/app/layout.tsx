@@ -13,7 +13,6 @@ const inter = Inter({ subsets: ['latin'] });
 
 // --- ICONOS ---
 const Icons = {
-  // Cambio de icono Agenda a uno más académico (Birrete)
   Academic: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" /></svg>,
   Habits: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
   Sport: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>,
@@ -58,11 +57,12 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
           <h2 className="mb-3 px-3 text-xs font-bold uppercase tracking-widest text-gray-500">General</h2>
           <nav className="space-y-1">
-            {/* CAMBIO AQUI: Agenda -> Académico */}
             <SidebarLink href="/" active={pathname === '/'} icon={<Icons.Academic />} label="Académico" />
-            <SidebarLink href="/habitos" active={pathname === '/habitos'} icon={<Icons.Habits />} label="Hábitos" />
+            {/* CAMBIO AQUI: Deporte antes que Hábitos */}
             <SidebarLink href="/deporte" active={pathname === '/deporte'} icon={<Icons.Sport />} label="Deporte" />
-            <SidebarLink href="/calendario" active={pathname === '/calendario'} icon={<Icons.Heart />} label="Nosotros" />
+            <SidebarLink href="/habitos" active={pathname === '/habitos'} icon={<Icons.Habits />} label="Hábitos" />
+            {/* CAMBIO AQUI: Nosotros renombrado a Planing */}
+            <SidebarLink href="/calendario" active={pathname === '/calendario'} icon={<Icons.Heart />} label="Planing" />
           </nav>
 
           <h2 className="mb-3 mt-6 px-3 text-xs font-bold uppercase tracking-widest text-gray-500">Configuración</h2>
@@ -82,11 +82,11 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
       <main className="flex flex-1 flex-col overflow-hidden bg-[#f0f2f5]">
         <header className="flex h-[80px] shrink-0 items-center justify-between border-b border-[#e9ecef] bg-white px-8">
           <h1 className="text-2xl font-bold text-[#212529]">
-            {/* CAMBIO AQUI: Título condicional */}
+            {/* CAMBIO AQUI: Títulos actualizados */}
             {pathname === '/' ? 'Académico' : 
              pathname === '/habitos' ? 'Hábitos' : 
              pathname === '/deporte' ? 'Deporte' : 
-             pathname === '/calendario' ? 'Nosotros' : 'Ajustes'}
+             pathname === '/calendario' ? 'Planing' : 'Ajustes'}
           </h1>
           <button onClick={() => signOut(auth)} className="flex items-center gap-2 rounded-lg bg-red-50 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-100">
             <Icons.Logout /> Salir
