@@ -17,7 +17,6 @@ const formatDate = (date: Date) => date.toISOString().split('T')[0];
 const weekDays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 
 export default function HabitosPage() {
-  // ... (Estados y useEffects iguales) ...
   const [config, setConfig] = useState({ 
     user1: 'Usuario 1', 
     user2: 'Usuario 2', 
@@ -123,4 +122,15 @@ export default function HabitosPage() {
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
               <XAxis dataKey="name" stroke="#9ca3af" tick={{fill: '#4b5563', fontSize: 12}} axisLine={false} tickLine={false} dy={10} />
-              <YAxis stroke="#9ca3af" tick={{fill: '#4b5563', fontSize: 12}} axisLine={false} tickLine={false
+              <YAxis stroke="#9ca3af" tick={{fill: '#4b5563', fontSize: 12}} axisLine={false} tickLine={false} domain={[0, 100]} />
+              <Tooltip contentStyle={{ backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #e5e7eb', color: '#1f2937', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }} itemStyle={{ color: '#1f2937' }} />
+              <Legend verticalAlign="top" height={36} iconType="circle" wrapperStyle={{ color: '#374151' }} />
+              <Area name={config.user1} type="monotone" dataKey="val1" stroke={config.color1} strokeWidth={3} fillOpacity={1} fill="url(#colorUser1)" animationDuration={1000} />
+              <Area name={config.user2} type="monotone" dataKey="val2" stroke={config.color2} strokeWidth={3} fillOpacity={1} fill="url(#colorUser2)" animationDuration={1000} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
+  );
+}

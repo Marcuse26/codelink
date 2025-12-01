@@ -122,4 +122,67 @@ const TodoCard = ({ title, dbPath, userColor }: { title: string, dbPath: string,
 
   return (
     <div 
-        className="p-6 rounded-2xl text-white shadow-lg flex flex-col h-[400px] border
+        className="p-6 rounded-2xl text-white shadow-lg flex flex-col h-[400px] border border-white/5"
+        style={{ 
+            background: `linear-gradient(145deg, ${userColor}, #0f0f1a)`,
+            boxShadow: `0 10px 30px -10px ${userColor}60`
+        }}
+    >
+      <h3 className="text-2xl font-bold mb-4 border-b border-white/20 pb-2 uppercase">TAREAS DE {title}</h3>
+      
+      <form onSubmit={addTask} className="flex gap-2 mb-4">
+        <input type="text" value={newTask} onChange={(e) => setNewTask(e.target.value)} placeholder="Nueva tarea..." className="w-full bg-black/20 placeholder-white/50 text-white rounded-lg px-3 py-2 outline-none focus:bg-black/40 transition text-sm backdrop-blur-sm" />
+        <button type="submit" className="bg-white/20 hover:bg-white/30 rounded-lg px-3 py-2 transition">➕</button>
+      </form>
+
+      <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
+        {/* ELIMINADO MENSAJE "Todo limpio" */}
+        {tasks.map((task) => (
+          <div key={task.id} className="group flex items-center justify-between bg-black/20 p-2 rounded-lg hover:bg-black/30 transition backdrop-blur-md border border-white/5">
+            <div onClick={() => toggleTask(task)} className="flex items-center gap-3 cursor-pointer flex-1">
+              <div className={`w-5 h-5 rounded border border-white/50 flex items-center justify-center transition-colors ${task.completed ? 'bg-white text-black' : 'bg-transparent'}`}>
+                {task.completed && <span className="text-xs font-bold">✓</span>}
+              </div>
+              <span className={`text-sm ${task.completed ? 'line-through text-white/50' : 'text-white'}`}>{task.text}</span>
+            </div>
+            <button onClick={() => deleteTask(task.id)} className="text-white/40 hover:text-red-300 opacity-0 group-hover:opacity-100 transition px-2">✕</button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default function AgendaPage() {
+  const [config, setConfig] = useState({ 
+    user1: 'Usuario 1', 
+    user2: 'Usuario 2', 
+    color1: '#3b82f6', 
+    color2: '#ec4899' 
+  });
+
+  useEffect(() => {
+    const unsubscribe = onValue(ref(db, 'settings'), (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            setConfig({
+                user1: data.user1 || 'Usuario 1',
+                user2: data.user2 || 'Usuario 2',
+                color1: data.color1 || '#3b82f6',
+                color2: data.color2 || '#ec4899'
+            });
+        }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  return (
+    <div className="space-y-8">
+      <CorkboardWidget />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <TodoCard title={config.user1} dbPath="tasks/user1" userColor={config.color1} />
+        <TodoCard title={config.user2} dbPath="tasks/user2" userColor={config.color2} />
+      </div>
+    </div>
+  );
+}
