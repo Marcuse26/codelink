@@ -4,39 +4,85 @@ import { ref, set, onValue } from 'firebase/database';
 import { db } from '../../firebase/config';
 
 export default function ConfigPage() {
-  const [form, setForm] = useState({ user1: '', user2: '', reunionDate: '' });
+  const [form, setForm] = useState({ 
+    user1: '', 
+    user2: '', 
+    color1: '#3b82f6', // Azul por defecto
+    color2: '#ec4899', // Rosa por defecto
+    reunionDate: '' 
+  });
 
   useEffect(() => {
-    onValue(ref(db, 'settings'), (s) => s.val() && setForm(s.val()));
+    onValue(ref(db, 'settings'), (s) => {
+        const data = s.val();
+        if (data) setForm({ ...form, ...data });
+    });
   }, []);
 
   const save = () => {
     set(ref(db, 'settings'), form);
-    alert('Guardado!');
+    alert('¡Ajustes guardados correctamente!');
   };
 
   return (
-    <div className="p-6 space-y-6 text-center">
-      <h1 className="text-2xl font-bold text-white">Ajustes</h1>
-      <input 
-        className="w-full p-3 rounded bg-white/10 text-white border border-white/20"
-        placeholder="Nombre 1"
-        value={form.user1}
-        onChange={e => setForm({...form, user1: e.target.value})}
-      />
-      <input 
-        className="w-full p-3 rounded bg-white/10 text-white border border-white/20"
-        placeholder="Nombre 2"
-        value={form.user2}
-        onChange={e => setForm({...form, user2: e.target.value})}
-      />
-      <input 
-        type="datetime-local"
-        className="w-full p-3 rounded bg-white/10 text-white border border-white/20"
-        value={form.reunionDate}
-        onChange={e => setForm({...form, reunionDate: e.target.value})}
-      />
-      <button onClick={save} className="w-full py-3 bg-pink-600 rounded text-white font-bold">Guardar</button>
+    <div className="p-6 space-y-8 max-w-2xl mx-auto">
+      <h1 className="text-3xl font-black text-white text-center mb-8">Ajustes Generales</h1>
+      
+      {/* Sección Usuario 1 */}
+      <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
+        <label className="text-gray-400 text-sm font-bold uppercase tracking-wider mb-2 block">Usuario 1</label>
+        <div className="flex gap-4">
+            <input 
+                className="flex-1 p-3 rounded-xl bg-black/30 text-white border border-white/10 outline-none focus:border-white/30 transition"
+                placeholder="Nombre"
+                value={form.user1}
+                onChange={e => setForm({...form, user1: e.target.value})}
+            />
+            <input 
+                type="color"
+                className="w-14 h-12 rounded-xl bg-transparent cursor-pointer border-0 p-0"
+                value={form.color1}
+                onChange={e => setForm({...form, color1: e.target.value})}
+            />
+        </div>
+      </div>
+
+      {/* Sección Usuario 2 */}
+      <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
+        <label className="text-gray-400 text-sm font-bold uppercase tracking-wider mb-2 block">Usuario 2</label>
+        <div className="flex gap-4">
+            <input 
+                className="flex-1 p-3 rounded-xl bg-black/30 text-white border border-white/10 outline-none focus:border-white/30 transition"
+                placeholder="Nombre"
+                value={form.user2}
+                onChange={e => setForm({...form, user2: e.target.value})}
+            />
+            <input 
+                type="color"
+                className="w-14 h-12 rounded-xl bg-transparent cursor-pointer border-0 p-0"
+                value={form.color2}
+                onChange={e => setForm({...form, color2: e.target.value})}
+            />
+        </div>
+      </div>
+
+      {/* Fecha Reunion */}
+      <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
+        <label className="text-gray-400 text-sm font-bold uppercase tracking-wider mb-2 block">Fecha de Reunión</label>
+        <input 
+            type="datetime-local"
+            className="w-full p-3 rounded-xl bg-black/30 text-white border border-white/10 outline-none focus:border-white/30 transition"
+            value={form.reunionDate}
+            onChange={e => setForm({...form, reunionDate: e.target.value})}
+        />
+      </div>
+
+      <button 
+        onClick={save} 
+        className="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-white font-bold text-lg shadow-lg hover:scale-[1.02] transition-transform"
+      >
+        Guardar Cambios
+      </button>
     </div>
   );
 }
