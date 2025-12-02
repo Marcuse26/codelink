@@ -10,6 +10,7 @@ import {
 import { ref, set, get, child } from 'firebase/database';
 import { auth, db } from '../../firebase/config';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image'; // IMPORTANTE: Importamos el componente de imagen
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -17,7 +18,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   
   const [isRegister, setIsRegister] = useState(false);
-  const [isRecovering, setIsRecovering] = useState(false); // Nuevo estado para recuperación
+  const [isRecovering, setIsRecovering] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   
@@ -73,14 +74,12 @@ export default function LoginPage() {
     }
   };
 
-  // --- LÓGICA DE RECUPERACIÓN ---
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
     try {
-        // 1. Buscar el email del usuario
         const dbRef = ref(db);
         const snapshot = await get(child(dbRef, `usernames/${username.toLowerCase()}`));
 
@@ -90,10 +89,9 @@ export default function LoginPage() {
 
         const registeredEmail = snapshot.val().email;
 
-        // 2. Enviar correo de reset
         await sendPasswordResetEmail(auth, registeredEmail);
         alert(`¡Correo enviado! Revisa la bandeja de entrada de ${registeredEmail} para restablecer tu contraseña.`);
-        setIsRecovering(false); // Volver al login
+        setIsRecovering(false);
 
     } catch (err: any) {
         setError(err.message);
@@ -110,18 +108,29 @@ export default function LoginPage() {
         <div className="absolute -top-10 -right-10 w-32 h-32 bg-pink-500/20 rounded-full blur-3xl"></div>
         <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl"></div>
 
-        <div className="text-center mb-8 relative z-10">
-          <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600 mb-2">CodeLink 💖</h1>
-          <p className="text-gray-400 text-sm uppercase tracking-widest">
-            {isRecovering ? 'Recuperar Contraseña' : (isRegister ? 'Crear Nueva Cuenta' : 'Acceso Privado')}
-          </p>
+        {/* HEADER CON LOGO */}
+        <div className="flex flex-col items-center justify-center mb-8 relative z-10">
+            {/* Contenedor de la imagen del logo */}
+            <div className="relative w-full h-32 mb-2">
+                <Image
+                    src="/logo.png" // Asegúrate de guardar tu imagen como 'logo.png' en la carpeta public
+                    alt="CodeLink Logo"
+                    fill
+                    className="object-contain" // Esto hace que el logo se ajuste sin deformarse
+                    priority
+                />
+            </div>
+            
+            {/* Texto auxiliar solo si no es Login normal */}
+            <p className="text-gray-400 text-xs uppercase tracking-widest font-bold">
+                {isRecovering ? 'RECUPERAR CONTRASEÑA' : (isRegister ? 'CREAR NUEVA CUENTA' : '')}
+            </p>
         </div>
         
         {error && <div className="bg-red-500/20 text-red-200 p-3 rounded-xl mb-6 text-center text-sm font-medium border border-red-500/20 animate-pulse">{error}</div>}
 
         <form onSubmit={isRecovering ? handleResetPassword : handleAuth} className="space-y-5 relative z-10">
           
-          {/* USUARIO (Siempre visible) */}
           <div>
             <label className="block text-gray-400 text-xs font-bold mb-1 ml-1 uppercase">Nombre de Usuario</label>
             <input 
@@ -134,7 +143,6 @@ export default function LoginPage() {
             />
           </div>
 
-          {/* EMAIL (Solo Registro) */}
           {isRegister && !isRecovering && (
             <div className="animate-fade-in-down">
               <label className="block text-gray-400 text-xs font-bold mb-1 ml-1 uppercase">Email</label>
@@ -149,7 +157,6 @@ export default function LoginPage() {
             </div>
           )}
 
-          {/* CONTRASEÑA (Solo Login y Registro, NO en Recuperación) */}
           {!isRecovering && (
             <div>
               <label className="block text-gray-400 text-xs font-bold mb-1 ml-1 uppercase">Contraseña</label>
@@ -164,7 +171,6 @@ export default function LoginPage() {
             </div>
           )}
 
-          {/* Enlace Olvidé contraseña (Solo en Login) */}
           {!isRegister && !isRecovering && (
             <div className="flex justify-end">
                 <button 
