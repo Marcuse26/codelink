@@ -77,7 +77,8 @@ export default function CalendarioPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl px-4 mt-8">
+      {/* ENLACES A CALENDARIOS - Aumentado el margen superior a mt-20 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl px-4 mt-20">
         <a href={config.calendarUrl1 || '#'} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-5 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all group">
             <div className="bg-blue-100 p-3 rounded-xl text-2xl group-hover:scale-110 transition-transform">📅</div>
             <div className="overflow-hidden">
