@@ -75,10 +75,14 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
       </aside>
 
       {/* CONTENIDO PRINCIPAL */}
-      <main className="flex flex-1 flex-col overflow-hidden bg-[#f0f2f5] pb-24 md:pb-0 relative">
-        {/* HEADER ELIMINADO */}
+      <main className="flex flex-1 flex-col overflow-hidden bg-[#f0f2f5] relative">
         
-        <div className="flex-1 overflow-y-auto p-4 md:p-8">
+        {/* CORRECCIÓN AQUÍ: 
+           Hemos aplicado 'pb-32' (padding-bottom grande) al contenedor que hace scroll.
+           Esto asegura que el contenido final quede por encima de la barra fija en móviles.
+           En escritorio (md:pb-8) volvemos a un padding normal.
+        */}
+        <div className="flex-1 overflow-y-auto p-4 pb-32 md:p-8 md:pb-8">
            <div className="mx-auto max-w-6xl pt-4 md:pt-0">
               {children}
            </div>
