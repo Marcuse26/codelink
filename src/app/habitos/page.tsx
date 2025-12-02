@@ -86,24 +86,33 @@ export default function HabitosPage() {
   return (
     <div className="space-y-8 py-6">
       <div className="grid grid-cols-2 gap-6">
-        <div className="bg-[#fdfbf7] p-6 rounded-3xl border border-gray-200 text-center shadow-lg" style={{ borderColor: `${config.color1}40`, boxShadow: `0 4px 20px ${config.color1}15` }}>
-            <p className="font-bold uppercase tracking-wider text-sm mb-3" style={{ color: config.color1 }}>{config.user1}</p>
+        {/* Tarjeta Usuario 1 - Borde más marcado (border-4 y sin transparencia en color) */}
+        <div className="bg-[#fdfbf7] p-6 rounded-3xl border-4 text-center shadow-lg" style={{ borderColor: config.color1, boxShadow: `0 4px 20px ${config.color1}20` }}>
+            <p className="font-black uppercase tracking-wider text-sm mb-3" style={{ color: config.color1 }}>{config.user1}</p>
             <div className="relative w-fit mx-auto">
                 <input type="number" value={todayValues.user1.toString()} onChange={(e) => handleInputChange('user1', e.target.value)} className="bg-transparent text-6xl font-black text-gray-800 w-32 text-center outline-none focus:scale-110 transition-transform" />
-                <span className="absolute top-0 -right-4 text-xl" style={{ color: config.color1 }}>%</span>
+                <span className="absolute top-0 -right-4 text-xl font-bold" style={{ color: config.color1 }}>%</span>
             </div>
         </div>
-        <div className="bg-[#fdfbf7] p-6 rounded-3xl border border-gray-200 text-center shadow-lg" style={{ borderColor: `${config.color2}40`, boxShadow: `0 4px 20px ${config.color2}15` }}>
-            <p className="font-bold uppercase tracking-wider text-sm mb-3" style={{ color: config.color2 }}>{config.user2}</p>
+
+        {/* Tarjeta Usuario 2 - Borde más marcado */}
+        <div className="bg-[#fdfbf7] p-6 rounded-3xl border-4 text-center shadow-lg" style={{ borderColor: config.color2, boxShadow: `0 4px 20px ${config.color2}20` }}>
+            <p className="font-black uppercase tracking-wider text-sm mb-3" style={{ color: config.color2 }}>{config.user2}</p>
             <div className="relative w-fit mx-auto">
                 <input type="number" value={todayValues.user2.toString()} onChange={(e) => handleInputChange('user2', e.target.value)} className="bg-transparent text-6xl font-black text-gray-800 w-32 text-center outline-none focus:scale-110 transition-transform" />
-                <span className="absolute top-0 -right-4 text-xl" style={{ color: config.color2 }}>%</span>
+                <span className="absolute top-0 -right-4 text-xl font-bold" style={{ color: config.color2 }}>%</span>
             </div>
         </div>
       </div>
 
-      <div className="bg-[#fdfbf7] p-6 rounded-3xl border border-gray-200 shadow-xl">
-        <h3 className="text-gray-700 font-bold mb-6 text-lg pl-2 border-l-4 uppercase" style={{ borderColor: config.color1 }}>PROGRESO SEMANAL</h3>
+      {/* Contenedor Gráfica - Borde gris más grueso (border-4) */}
+      <div className="bg-[#fdfbf7] p-6 rounded-3xl border-4 border-gray-300 shadow-xl">
+        
+        {/* Título modificado: Sin raya lateral, texto más oscuro y grande */}
+        <h3 className="text-gray-800 font-black mb-6 text-xl uppercase tracking-widest">
+            PROGRESO SEMANAL
+        </h3>
+
         <div className="h-[300px] md:h-[350px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
@@ -118,12 +127,12 @@ export default function HabitosPage() {
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
-              <XAxis dataKey="name" stroke="#9ca3af" tick={{fill: '#4b5563', fontSize: 12}} axisLine={false} tickLine={false} dy={10} />
-              <YAxis stroke="#9ca3af" tick={{fill: '#4b5563', fontSize: 12}} axisLine={false} tickLine={false} domain={[0, 100]} />
-              <Tooltip contentStyle={{ backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #e5e7eb', color: '#1f2937', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }} itemStyle={{ color: '#1f2937' }} />
-              <Legend verticalAlign="top" height={36} iconType="circle" wrapperStyle={{ color: '#374151' }} />
-              <Area name={config.user1} type="monotone" dataKey="val1" stroke={config.color1} strokeWidth={3} fillOpacity={1} fill="url(#colorUser1)" animationDuration={1000} />
-              <Area name={config.user2} type="monotone" dataKey="val2" stroke={config.color2} strokeWidth={3} fillOpacity={1} fill="url(#colorUser2)" animationDuration={1000} />
+              <XAxis dataKey="name" stroke="#9ca3af" tick={{fill: '#4b5563', fontSize: 12, fontWeight: 'bold'}} axisLine={false} tickLine={false} dy={10} />
+              <YAxis stroke="#9ca3af" tick={{fill: '#4b5563', fontSize: 12, fontWeight: 'bold'}} axisLine={false} tickLine={false} domain={[0, 100]} />
+              <Tooltip contentStyle={{ backgroundColor: '#ffffff', borderRadius: '12px', border: '2px solid #e5e7eb', color: '#1f2937', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }} itemStyle={{ color: '#1f2937', fontWeight: 'bold' }} />
+              <Legend verticalAlign="top" height={36} iconType="circle" wrapperStyle={{ color: '#374151', fontWeight: 'bold', textTransform: 'uppercase', fontSize: '12px' }} />
+              <Area name={config.user1} type="monotone" dataKey="val1" stroke={config.color1} strokeWidth={4} fillOpacity={1} fill="url(#colorUser1)" animationDuration={1000} />
+              <Area name={config.user2} type="monotone" dataKey="val2" stroke={config.color2} strokeWidth={4} fillOpacity={1} fill="url(#colorUser2)" animationDuration={1000} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
