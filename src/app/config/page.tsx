@@ -209,9 +209,8 @@ export default function ConfigPage() {
         </div>
       </div>
 
-      {/* --- NUEVO FOOTER DE WEBEA --- */}
+      {/* --- NUEVO FOOTER DE WEBEA (SOLO TEXTO) --- */}
       <div className="flex flex-col items-center justify-center pt-10 pb-6 opacity-60">
-         <img src="/webea.png" alt="Webea" className="h-6 mb-2 opacity-50 grayscale hover:grayscale-0 transition-all" />
          <p className="text-xs text-gray-500 font-medium">Desarrollado por Webea</p>
          <a href="mailto:webea.oficial@gmail.com" className="text-[10px] text-gray-600 hover:text-pink-500 transition-colors mt-1">
             Soporte: webea.oficial@gmail.com
