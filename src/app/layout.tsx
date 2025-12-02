@@ -134,12 +134,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <title>CodeLink</title>
         <meta name="description" content="Tu espacio compartido" />
+        <meta name="theme-color" content="#1a1a2e" />
         
-        {/* CORRECCIÓN: Forzamos la actualización usando '?v=4' */}
-        {/* Esto obliga al navegador a recargar el logo.png correcto */}
-        <link rel="icon" type="image/png" href="/logo.png?v=4" />
-        <link rel="apple-touch-icon" href="/logo.png?v=4" />
+        {/* ICONO PARA PESTAÑAS Y MARCADORES */}
+        <link rel="icon" type="image/png" href="/codelink-icon.png" />
+        <link rel="shortcut icon" href="/codelink-icon.png" />
         
+        {/* ICONO PARA IOS (IPHONE/IPAD) */}
+        <link rel="apple-touch-icon" href="/codelink-icon.png" />
+        
+        {/* MANIFEST PARA LA INSTALACIÓN */}
         <link rel="manifest" href="/manifest.json" />
       </head>
       <body className={inter.className}>
