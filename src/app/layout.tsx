@@ -11,7 +11,7 @@ import { auth } from '../firebase/config';
 
 const inter = Inter({ subsets: ['latin'] });
 
-// --- ICONOS ---
+// --- ICONOS (Se mantienen para escritorio) ---
 const Icons = {
   Academic: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" /></svg>,
   Habits: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
@@ -44,7 +44,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   if (!user) return null;
 
   return (
-    // CORRECCIÓN 1: max-w-[100vw] y overflow-hidden en el contenedor raíz
     <div className="flex h-screen w-full max-w-[100vw] bg-[#f0f2f5] font-sans overflow-hidden">
       
       {/* SIDEBAR (Escritorio) */}
@@ -55,7 +54,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
               CodeLink 💖
             </h1>
           </div>
-
           <nav className="space-y-1">
             <SidebarLink href="/" active={pathname === '/'} icon={<Icons.Academic />} label="ACADÉMICO" />
             <SidebarLink href="/deporte" active={pathname === '/deporte'} icon={<Icons.Sport />} label="DEPORTE" />
@@ -64,7 +62,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
             <SidebarLink href="/config" active={pathname === '/config'} icon={<Icons.Settings />} label="AJUSTES" />
           </nav>
         </div>
-
         <div>
           <button onClick={() => signOut(auth)} className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-[15px] font-semibold text-red-600 hover:bg-red-50 transition-all duration-200">
             <Icons.Logout /> SALIR
@@ -76,30 +73,34 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
       </aside>
 
       {/* CONTENIDO PRINCIPAL */}
-      {/* CORRECCIÓN 2: min-w-0 para evitar que el contenido fuerce el ancho en Flexbox */}
       <main className="flex flex-1 flex-col min-w-0 overflow-hidden bg-[#f0f2f5] relative">
         
-        {/* CORRECCIÓN 3: overflow-x-hidden en el área de scroll */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 pb-32 md:p-8 md:pb-8">
-           <div className="mx-auto max-w-6xl pt-4 md:pt-0">
+        {/* BARRA INFERIOR (Móvil) - ESTILO IMPACT / NARANJA */}
+        {/* Usamos 'bg-orange-500' y bordes para enmarcar cada elemento */}
+        <div className="md:hidden w-full h-[70px] bg-orange-500 shrink-0 flex items-stretch justify-center shadow-lg z-50 border-b-4 border-orange-700">
+            
+            <BottomNavLink href="/" active={pathname === '/'} label="ACAD." />
+            <BottomNavLink href="/deporte" active={pathname === '/deporte'} label="SPORT" />
+            <BottomNavLink href="/habitos" active={pathname === '/habitos'} label="HABIT" />
+            <BottomNavLink href="/calendario" active={pathname === '/calendario'} label="PLAN" />
+            <BottomNavLink href="/config" active={pathname === '/config'} label="CONF" />
+            
+            {/* BOTÓN SALIR INTEGRADO - FONDO ROJO PARA DIFERENCIAR */}
+            <button 
+                onClick={() => signOut(auth)} 
+                className="flex-1 flex items-center justify-center bg-red-600 text-white border-r-2 border-red-800 active:bg-red-700 transition-colors"
+            >
+                <span className="text-xs font-black uppercase tracking-tighter">SALIR</span>
+            </button>
+        </div>
+
+        {/* ÁREA DE CONTENIDO */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-8">
+           <div className="mx-auto max-w-6xl pt-2 md:pt-0">
               {children}
            </div>
         </div>
 
-        {/* BARRA INFERIOR (Móvil) - AZUL DIFERENCIADA */}
-        <div className="fixed bottom-0 left-0 w-full h-[80px] bg-blue-600 flex md:hidden items-center justify-around z-50 pb-2 shadow-[0_-5px_20px_rgba(0,0,0,0.3)]">
-            <BottomNavLink href="/" active={pathname === '/'} icon={<Icons.Academic />} label="Académico" />
-            <BottomNavLink href="/deporte" active={pathname === '/deporte'} icon={<Icons.Sport />} label="Deporte" />
-            <BottomNavLink href="/habitos" active={pathname === '/habitos'} icon={<Icons.Habits />} label="Hábitos" />
-            <BottomNavLink href="/calendario" active={pathname === '/calendario'} icon={<Icons.Heart />} label="Planing" />
-            <BottomNavLink href="/config" active={pathname === '/config'} icon={<Icons.Settings />} label="Ajustes" />
-            
-            {/* BOTÓN SALIR */}
-            <button onClick={() => signOut(auth)} className="flex flex-col items-center justify-center w-full h-full gap-1 text-red-200 hover:text-white transition-colors">
-                <span className="scale-90"><Icons.Logout /></span>
-                <span className="text-[9px] font-bold uppercase tracking-wide">Salir</span>
-            </button>
-        </div>
       </main>
     </div>
   );
@@ -111,10 +112,24 @@ const SidebarLink = ({ href, active, icon, label }: any) => (
   </Link>
 );
 
-const BottomNavLink = ({ href, active, icon, label }: any) => (
-    <Link href={href} className={`flex flex-col items-center justify-center w-full h-full gap-1 transition-all ${active ? 'text-white scale-110' : 'text-blue-200 hover:text-blue-100'}`}>
-      <span className="transition-transform">{icon}</span>
-      <span className="text-[9px] font-bold uppercase tracking-wide">{label}</span>
+// Componente BottomNavLink ESTILO IMPACT
+// Sin iconos, solo texto grande, negrita, enmarcado con bordes
+const BottomNavLink = ({ href, active, label }: any) => (
+    <Link 
+        href={href} 
+        className={`
+            flex-1 flex items-center justify-center 
+            border-r-2 border-orange-700 
+            transition-all duration-200
+            ${active ? 'bg-orange-600' : 'bg-orange-500 hover:bg-orange-400'}
+        `}
+    >
+      <span className={`
+        text-xs font-black uppercase tracking-tighter 
+        ${active ? 'text-white scale-110' : 'text-orange-900/70'}
+      `}>
+        {label}
+      </span>
     </Link>
 );
 
