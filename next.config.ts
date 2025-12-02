@@ -1,15 +1,18 @@
 import type { NextConfig } from "next";
 
-// Se requiere 'require' para next-pwa porque es un módulo CommonJS
-const withPWA = require("next-pwa")({
+const withPWA = require("@ducanh2912/next-pwa").default({
   dest: "public",
+  cacheOnFrontEndNav: true,
+  aggressiveFrontEndNavCaching: true,
+  reloadOnOnline: true,
+  swcMinify: true,
   disable: process.env.NODE_ENV === "development",
-  register: true,
-  skipWaiting: true,
+  workboxOptions: {
+    disableDevLogs: true,
+  },
 });
 
 const nextConfig: NextConfig = {
-  /* config options here */
   reactCompiler: true,
 };
 
