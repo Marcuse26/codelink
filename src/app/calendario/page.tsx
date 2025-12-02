@@ -7,7 +7,6 @@ export default function CalendarioPage() {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [config, setConfig] = useState({ 
     reunionDate: '', 
-    eventName: '', // Nuevo estado para el nombre del evento
     user1: 'Usuario 1', 
     user2: 'Usuario 2',
     calendarUrl1: '#',
@@ -47,16 +46,10 @@ export default function CalendarioPage() {
   return (
     <div className="flex flex-col items-center justify-center space-y-10 py-10 w-full">
       
-      {/* TÍTULO Y SUBTÍTULO */}
-      <div className="text-center">
-        <h1 className="text-3xl font-black text-gray-800 uppercase tracking-widest">
-            TIEMPO RESTANTE
-        </h1>
-        {/* Subtítulo dinámico para el evento */}
-        <h2 className="text-xl text-gray-500 font-bold uppercase tracking-wider mt-2">
-            PARA {config.eventName || 'EL EVENTO'}
-        </h2>
-      </div>
+      {/* TÍTULO EN MAYÚSCULAS */}
+      <h1 className="text-3xl font-black text-gray-800 uppercase tracking-widest text-center">
+        TIEMPO RESTANTE
+      </h1>
 
       <div className="bg-white rounded-[2.5rem] shadow-xl border border-gray-200 p-10 flex flex-col items-center justify-center w-full max-w-2xl mx-auto transform hover:scale-[1.01] transition-transform duration-500">
         <div className="flex flex-row items-baseline justify-center gap-6 mb-6">
@@ -77,8 +70,8 @@ export default function CalendarioPage() {
         </div>
       </div>
 
-      {/* ENLACES A CALENDARIOS - Aumentado el margen superior a mt-20 */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl px-4 mt-20">
+      {/* ENLACES A CALENDARIOS - SEPARACIÓN AGRESIVA (mt-32) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl px-4 mt-32">
         <a href={config.calendarUrl1 || '#'} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-5 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all group">
             <div className="bg-blue-100 p-3 rounded-xl text-2xl group-hover:scale-110 transition-transform">📅</div>
             <div className="overflow-hidden">
