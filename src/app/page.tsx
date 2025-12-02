@@ -42,7 +42,7 @@ const CorkboardWidget = () => {
     e.preventDefault();
     if (!newNoteText.trim()) return;
     const randomColor = noteColors[Math.floor(Math.random() * noteColors.length)];
-    const randomRotation = Math.floor(Math.random() * 10) - 5; 
+    const randomRotation = Math.floor(Math.random() * 6) - 3; // Rotación sutil
     push(ref(db, 'notes'), { text: newNoteText, color: randomColor, rotation: randomRotation, createdAt: Date.now() });
     setNewNoteText('');
     setShowInput(false);
@@ -50,15 +50,13 @@ const CorkboardWidget = () => {
 
   const deleteNote = (id: string) => remove(ref(db, `notes/${id}`));
 
-  // AJUSTE DE TAMAÑO: Hacemos el grid más denso (más columnas) para que las notas sean más pequeñas
-  const getDynamicStyles = (count: number) => {
-    // Siempre usamos muchas columnas para que sean pequeñas (tipo post-it pequeño)
-    if (count <= 5) return { grid: "grid-cols-3 md:grid-cols-5", card: "p-2", text: "text-[10px] md:text-xs" };
-    else if (count <= 10) return { grid: "grid-cols-4 md:grid-cols-6", card: "p-1", text: "text-[9px] md:text-[10px]" };
-    else return { grid: "grid-cols-5 md:grid-cols-8", card: "p-1", text: "text-[8px]" };
+  // ESTILOS FIJOS:
+  // grid-cols-3 en móvil y grid-cols-6 o 8 en PC para que los posit sean SIEMPRE pequeños.
+  const styles = { 
+    grid: "grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8", 
+    card: "p-3", // Más padding interno
+    text: "text-xs md:text-sm font-bold" // Texto más grande y negrita
   };
-  
-  const styles = getDynamicStyles(notes.length + 1);
 
   return (
     <div className="relative w-full max-w-full mx-auto min-h-[400px] bg-[#d7c49e] rounded-xl border-[8px] md:border-[12px] border-[#8b5a2b] shadow-2xl p-4 md:p-6 overflow-hidden flex flex-col box-border">
@@ -79,30 +77,49 @@ const CorkboardWidget = () => {
         </div>
       )}
 
-      <div className={`grid ${styles.grid} gap-2 md:gap-4 transition-all duration-500 ease-in-out w-full`}>
+      {/* Grid con items alineados al inicio */}
+      <div className={`grid ${styles.grid} auto-rows-min gap-3 md:gap-5 transition-all duration-500 ease-in-out w-full content-start`}>
         
-        {/* --- NOTA FIJA WEBEA (CUADRADA) --- */}
-        <div className={`relative shadow-[2px_2px_8px_rgba(0,0,0,0.15)] transition-transform hover:scale-105 duration-300 group bg-white aspect-square ${styles.card} flex flex-col items-center justify-center text-center overflow-hidden w-full`} style={{ transform: 'rotate(-1deg)' }}>
-            <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-red-600 rounded-full shadow-[1px_1px_2px_rgba(0,0,0,0.3)] z-10 border border-red-800"></div>
-            <div className="flex flex-col items-center justify-center w-full h-full gap-1 p-1">
-                {/* Logo reducido */}
-                <img src="/webea.png" alt="Webea" className="w-auto h-3 md:h-5 object-contain" />
-                <div className={`text-gray-800 font-bold leading-tight w-full ${styles.text}`}>
-                    <p className="mb-1">Desarrollado por Webea</p>
-                    <div className="pt-1 border-t border-gray-100 w-full">
-                        <p className="text-[0.6em] font-normal text-gray-400 leading-none mb-0.5">Soporte:</p>
-                        <p className="text-[0.6em] text-blue-600 break-all leading-none">webea.oficial@gmail.com</p>
+        {/* --- NOTA FIJA WEBEA --- */}
+        <div className={`relative shadow-md hover:shadow-xl transition-transform hover:scale-105 duration-300 group bg-white aspect-square ${styles.card} flex flex-col items-center justify-between text-center overflow-hidden w-full`} style={{ transform: 'rotate(-1deg)' }}>
+            {/* Chincheta */}
+            <div className="absolute -top-1.5 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-red-600 rounded-full shadow-sm z-10 border border-red-800"></div>
+            
+            {/* Contenido Nota Fija */}
+            <div className="flex flex-col items-center justify-center w-full h-full gap-1 pt-2">
+                {/* Imagen ajustada para no recortarse (object-contain) y altura controlada */}
+                <div className="w-full h-1/2 flex items-center justify-center">
+                    <img src="/webea.png" alt="Webea" className="w-full h-full object-contain" />
+                </div>
+                
+                {/* Texto más grande y legible */}
+                <div className="w-full flex flex-col justify-center h-1/2">
+                    <p className="text-[10px] md:text-xs font-black text-gray-800 leading-tight uppercase">
+                        Desarrollado por Webea
+                    </p>
+                    <div className="mt-1 pt-1 border-t border-gray-100 w-full">
+                        <p className="text-[8px] md:text-[9px] font-bold text-gray-500 leading-none mb-0.5">
+                            Soporte:
+                        </p>
+                        <p className="text-[8px] md:text-[9px] font-bold text-blue-600 break-all leading-tight">
+                            webea.oficial@gmail.com
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
 
-        {/* --- NOTAS DINÁMICAS (CUADRADAS) --- */}
+        {/* --- NOTAS DINÁMICAS --- */}
         {notes.map((note) => (
-          <div key={note.id} className={`relative shadow-[2px_2px_8px_rgba(0,0,0,0.15)] transition-transform hover:scale-105 duration-300 group ${note.color} aspect-square ${styles.card} flex items-center justify-center text-center overflow-hidden w-full`} style={{ transform: `rotate(${note.rotation}deg)` }}>
-            <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-red-600 rounded-full shadow-[1px_1px_2px_rgba(0,0,0,0.3)] z-10 border border-red-800"></div>
-            <p className={`text-gray-800 font-medium leading-snug break-words w-full px-1 ${styles.text}`}>{note.text}</p>
-            <button onClick={(e) => { e.stopPropagation(); deleteNote(note.id); }} className="absolute -bottom-1 -right-1 bg-red-500 text-white w-4 h-4 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all text-[8px] font-bold shadow-lg hover:bg-red-600 hover:scale-110 cursor-pointer" title="Quitar">✕</button>
+          <div key={note.id} className={`relative shadow-md hover:shadow-xl transition-transform hover:scale-105 duration-300 group ${note.color} aspect-square ${styles.card} flex items-center justify-center text-center overflow-hidden w-full`} style={{ transform: `rotate(${note.rotation}deg)` }}>
+            <div className="absolute -top-1.5 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-red-600 rounded-full shadow-sm z-10 border border-red-800"></div>
+            
+            {/* Texto de nota normal más grande */}
+            <p className={`text-gray-800 leading-snug break-words w-full h-full flex items-center justify-center ${styles.text}`}>
+                {note.text}
+            </p>
+            
+            <button onClick={(e) => { e.stopPropagation(); deleteNote(note.id); }} className="absolute -bottom-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all text-xs font-bold shadow-lg hover:bg-red-600 cursor-pointer z-20" title="Quitar">✕</button>
           </div>
         ))}
       </div>
@@ -110,7 +127,7 @@ const CorkboardWidget = () => {
   );
 };
 
-// --- Componente Lista de Tareas ---
+// --- Componente Lista de Tareas (SIN CAMBIOS) ---
 const TodoCard = ({ title, dbPath, userColor }: { title: string, dbPath: string, userColor: string }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState('');
