@@ -1,3 +1,4 @@
+import_file_code = """
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -50,17 +51,17 @@ const CorkboardWidget = () => {
 
   const deleteNote = (id: string) => remove(ref(db, `notes/${id}`));
 
-  // --- CAMBIOS DE ESTILO AQUÍ ---
-  // grid-cols-4: Forza 4 notas por fila (las hace más pequeñas).
-  // text: Aumentado a 'text-base' y 'md:text-lg' con 'font-black' para que se lea muy bien.
+  // ESTILOS AJUSTADOS:
+  // - grid-cols-4: Para que quepan 4 en fila (más pequeños).
+  // - text: Aumentado para mejor lectura.
   const styles = { 
-    grid: "grid-cols-4 gap-2 md:gap-4", // 4 columnas siempre, hueco más ajustado
-    card: "p-2 md:p-3", 
-    text: "text-base md:text-lg font-black leading-tight" // Texto más grande y grueso
+    grid: "grid-cols-4 gap-2 md:gap-3", 
+    card: "p-2", 
+    text: "text-base md:text-xl font-black leading-tight" 
   };
 
   return (
-    <div className="relative w-full max-w-full mx-auto min-h-[300px] md:min-h-[400px] bg-[#d7c49e] rounded-xl border-[8px] md:border-[12px] border-[#8b5a2b] shadow-2xl p-4 overflow-hidden flex flex-col box-border">
+    <div className="relative w-full max-w-full mx-auto min-h-[250px] md:min-h-[350px] bg-[#d7c49e] rounded-xl border-[8px] md:border-[12px] border-[#8b5a2b] shadow-2xl p-4 overflow-hidden flex flex-col box-border shrink-0">
       <div className="flex justify-between items-center mb-4 relative z-10 shrink-0">
         <div className="bg-[#fdfbf7] px-3 py-1 shadow-md transform -rotate-1">
             <h2 className="text-lg font-black text-[#5d3a1a] uppercase tracking-widest border-b-2 border-[#5d3a1a]">TABLÓN ({notes.length + 1})</h2>
@@ -69,7 +70,7 @@ const CorkboardWidget = () => {
       </div>
       
       {showInput && (
-        <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-30 w-60 animate-in fade-in zoom-in duration-200">
+        <div className="absolute top-16 left-1/2 transform -translate-x-1/2 z-30 w-60 animate-in fade-in zoom-in duration-200">
           <form onSubmit={addNote} className="bg-yellow-100 p-4 shadow-[0_10px_20px_rgba(0,0,0,0.3)] rotate-1 border-t-8 border-yellow-200/50">
             <div className="w-4 h-4 rounded-full bg-red-600 mx-auto mb-3 shadow-[inset_0_-2px_4px_rgba(0,0,0,0.3)]"></div>
             <textarea autoFocus className="w-full bg-transparent outline-none text-gray-900 text-lg font-bold resize-none placeholder-gray-500/50 h-24" placeholder="Escribe algo..." value={newNoteText} onChange={e => setNewNoteText(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); addNote(e); } }} />
@@ -149,20 +150,20 @@ const TodoCard = ({ title, dbPath, userColor }: { title: string, dbPath: string,
 
   return (
     <div 
-        className="p-4 md:p-6 rounded-2xl text-white shadow-lg flex flex-col h-[400px] border border-white/5 w-full overflow-hidden"
+        className="p-4 rounded-2xl text-white shadow-lg flex flex-col h-full border border-white/5 w-full overflow-hidden"
         style={{ 
             background: `linear-gradient(145deg, ${userColor}, #0f0f1a)`,
             boxShadow: `0 10px 30px -10px ${userColor}60`
         }}
     >
-      <h3 className="text-lg md:text-xl font-bold mb-4 border-b border-white/20 pb-2 uppercase truncate">TAREAS DE {title}</h3>
+      <h3 className="text-lg md:text-xl font-bold mb-3 border-b border-white/20 pb-2 uppercase truncate">TAREAS DE {title}</h3>
       
-      <form onSubmit={addTask} className="flex gap-2 mb-4 w-full">
+      <form onSubmit={addTask} className="flex gap-2 mb-3 w-full shrink-0">
         <input type="text" value={newTask} onChange={(e) => setNewTask(e.target.value)} placeholder="Nueva tarea..." className="w-full bg-black/20 placeholder-white/50 text-white rounded-lg px-3 py-2 outline-none focus:bg-black/40 transition text-sm backdrop-blur-sm" />
         <button type="submit" className="bg-white/20 hover:bg-white/30 rounded-lg px-3 py-2 transition shrink-0">➕</button>
       </form>
 
-      <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar w-full">
+      <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar w-full min-h-0">
         {tasks.map((task) => (
           <div key={task.id} className="group flex items-center justify-between bg-black/20 p-2 rounded-lg hover:bg-black/30 transition backdrop-blur-md border border-white/5 w-full">
             <div onClick={() => toggleTask(task)} className="flex items-center gap-3 cursor-pointer flex-1 min-w-0">
@@ -203,17 +204,21 @@ export default function AgendaPage() {
   }, []);
 
   return (
-    <div className="space-y-6 w-full max-w-full overflow-hidden">
+    // Altura calculada para ocupar la pantalla sin scroll (ajustado para móvil y desktop)
+    <div className="flex flex-col gap-4 w-full max-w-full h-[calc(100vh-130px)] md:h-[calc(100vh-100px)] pb-1">
       
-      {/* 1. Tablón de Notas */}
+      {/* 1. Tablón de Notas (Tamaño fijo/mínimo) */}
       <CorkboardWidget />
 
-      {/* 2. Listas de Tareas - CAMBIO IMPORTANTE AQUÍ */}
-      {/* Usamos 'grid-cols-2' para forzar dos columnas lado a lado */}
-      <div className="grid grid-cols-2 gap-4 md:gap-6 w-full">
+      {/* 2. Listas de Tareas */}
+      {/* grid-cols-2: Dos columnas. flex-1: Ocupa todo el alto restante. */}
+      <div className="grid grid-cols-2 gap-4 w-full flex-1 min-h-0">
         <TodoCard title={config.user1} dbPath="tasks/user1" userColor={config.color1} />
         <TodoCard title={config.user2} dbPath="tasks/user2" userColor={config.color2} />
       </div>
     </div>
   );
 }
+"""
+
+print(import_file_code)
