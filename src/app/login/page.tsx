@@ -10,7 +10,7 @@ import {
 import { ref, set, get, child } from 'firebase/database';
 import { auth, db } from '../../firebase/config';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
+import Image from 'next/image'; // Importamos el componente de imagen
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -31,6 +31,7 @@ export default function LoginPage() {
     
     try {
       if (isRegister) {
+        // --- REGISTRO ---
         const dbRef = ref(db);
         const snapshot = await get(child(dbRef, `usernames/${username.toLowerCase()}`));
 
@@ -50,6 +51,7 @@ export default function LoginPage() {
         router.push('/');
 
       } else {
+        // --- LOGIN ---
         const dbRef = ref(db);
         const snapshot = await get(child(dbRef, `usernames/${username.toLowerCase()}`));
 
@@ -102,22 +104,26 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center p-4 bg-[#1a1a2e]">
       <div className="max-w-md w-full glass-card p-8 rounded-3xl shadow-2xl border border-white/10 bg-white/5 backdrop-blur-xl relative overflow-hidden">
         
+        {/* Decoración de fondo */}
         <div className="absolute -top-10 -right-10 w-32 h-32 bg-pink-500/20 rounded-full blur-3xl"></div>
         <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl"></div>
 
+        {/* CABECERA CON LOGO */}
         <div className="flex flex-col items-center justify-center mb-8 relative z-10">
-            {/* CORRECCIÓN IMAGEN: Tamaños explícitos y ruta relativa */}
-            <div className="relative w-64 h-32 mb-4">
-                <Image
+            {/* Logo con dimensiones fijas para evitar errores de carga */}
+            <div className="mb-4">
+                <Image 
                     src="/logo.png" 
-                    alt="CodeLink Logo"
-                    fill
-                    className="object-contain"
-                    priority
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    alt="CodeLink Logo" 
+                    width={280} 
+                    height={100} 
+                    className="object-contain" // Asegura que el logo se vea entero
+                    priority // Carga prioritaria para que aparezca rápido
+                    style={{ width: 'auto', height: 'auto' }} // Mantiene proporción
                 />
             </div>
             
+            {/* Texto de estado (solo visible en registro/recuperación) */}
             <p className="text-gray-400 text-xs uppercase tracking-widest font-bold">
                 {isRecovering ? 'RECUPERAR CONTRASEÑA' : (isRegister ? 'CREAR NUEVA CUENTA' : '')}
             </p>
@@ -127,6 +133,7 @@ export default function LoginPage() {
 
         <form onSubmit={isRecovering ? handleResetPassword : handleAuth} className="space-y-5 relative z-10">
           
+          {/* CAMPO USUARIO */}
           <div>
             <label className="block text-gray-400 text-xs font-bold mb-1 ml-1 uppercase">Nombre de Usuario</label>
             <input 
@@ -139,6 +146,7 @@ export default function LoginPage() {
             />
           </div>
 
+          {/* CAMPO EMAIL (Solo Registro) */}
           {isRegister && !isRecovering && (
             <div className="animate-fade-in-down">
               <label className="block text-gray-400 text-xs font-bold mb-1 ml-1 uppercase">Email</label>
@@ -153,6 +161,7 @@ export default function LoginPage() {
             </div>
           )}
 
+          {/* CAMPO CONTRASEÑA */}
           {!isRecovering && (
             <div>
               <label className="block text-gray-400 text-xs font-bold mb-1 ml-1 uppercase">Contraseña</label>
@@ -167,6 +176,7 @@ export default function LoginPage() {
             </div>
           )}
 
+          {/* ENLACE OLVIDÉ CONTRASEÑA */}
           {!isRegister && !isRecovering && (
             <div className="flex justify-end">
                 <button 
