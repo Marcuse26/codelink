@@ -5,7 +5,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { ref, onValue, update } from 'firebase/database';
 import { db } from '../../firebase/config';
 
-// ... (Helpers y weekDays se mantienen igual)
+// ... (Helpers)
 const getTodayString = () => new Date().toISOString().split('T')[0];
 const getStartOfWeek = (date: Date) => {
   const d = new Date(date);
@@ -17,7 +17,6 @@ const formatDate = (date: Date) => date.toISOString().split('T')[0];
 const weekDays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 
 export default function HabitosPage() {
-  // ... (Toda la lógica de estados y useEffect igual)
   const [config, setConfig] = useState({ 
     user1: 'Usuario 1', 
     user2: 'Usuario 2', 
@@ -86,10 +85,7 @@ export default function HabitosPage() {
 
   return (
     <div className="space-y-8 py-6">
-      <h1 className="text-3xl font-bold text-gray-800 text-center uppercase">HÁBITOS DIARIOS</h1>
-      
-      {/* CAMBIO AQUI: grid-cols-1 para móvil, md:grid-cols-2 para escritorio */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-2 gap-6">
         <div className="bg-[#fdfbf7] p-6 rounded-3xl border border-gray-200 text-center shadow-lg" style={{ borderColor: `${config.color1}40`, boxShadow: `0 4px 20px ${config.color1}15` }}>
             <p className="font-bold uppercase tracking-wider text-sm mb-3" style={{ color: config.color1 }}>{config.user1}</p>
             <div className="relative w-fit mx-auto">

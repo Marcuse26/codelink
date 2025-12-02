@@ -22,19 +22,16 @@ export default function DeportePage() {
   const today = getTodayStr();
   const yesterday = getYesterdayStr();
 
-  // Cargar Configuración y Racha
   useEffect(() => {
     const unsubStreak = onValue(ref(db, 'streak'), (snapshot) => {
       const data = snapshot.val();
       if (data) setStreakData(data);
       setLoading(false);
     });
-
     const unsubConfig = onValue(ref(db, 'settings'), (snapshot) => {
         const data = snapshot.val();
         if (data) setConfig(data);
     });
-
     return () => { unsubStreak(); unsubConfig(); };
   }, []);
 
@@ -65,9 +62,7 @@ export default function DeportePage() {
 
   return (
     <div className="space-y-8 py-6 text-center max-w-md mx-auto">
-      <h1 className="text-3xl font-bold text-gray-800 uppercase">STRAVA</h1>
       
-      {/* Contador Racha */}
       <div className={`p-8 rounded-3xl border shadow-xl transition-all duration-500 ${isCompletedToday ? 'bg-gradient-to-br from-orange-400 to-orange-600 border-orange-400' : 'bg-white border-orange-200'}`}>
         <p className={`uppercase text-sm font-bold tracking-widest ${isCompletedToday ? 'text-orange-100' : 'text-orange-500'}`}>
           RACHA CONJUNTA
@@ -80,7 +75,6 @@ export default function DeportePage() {
         </p>
       </div>
 
-      {/* Botones Acción */}
       <div className="relative group space-y-4">
         <button onClick={handleStreak} disabled={isCompletedToday || loading} className={`w-full py-6 rounded-2xl font-black text-xl shadow-lg transition-all transform active:scale-95 flex items-center justify-center gap-2 uppercase ${isCompletedToday ? 'bg-green-500 text-white cursor-default shadow-green-500/30' : 'bg-orange-600 text-white hover:bg-orange-700 hover:shadow-2xl shadow-orange-500/20 hover:-translate-y-1'}`}>
             {loading ? 'CARGANDO...' : isCompletedToday ? '✅ ¡OBJETIVO CUMPLIDO!' : '🔥 ¡HEMOS ENTRENADO!'}
@@ -93,26 +87,14 @@ export default function DeportePage() {
         )}
       </div>
 
-      {/* Enlaces de Strava */}
       <div className="grid grid-cols-2 gap-4 mt-8">
-        <a 
-            href={config.sportUrl1 || '#'} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="flex flex-col items-center justify-center p-4 bg-white rounded-2xl shadow-md border border-orange-100 hover:shadow-lg hover:border-orange-300 hover:-translate-y-1 transition-all group"
-        >
+        <a href={config.sportUrl1 || '#'} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center p-4 bg-white rounded-2xl shadow-md border border-orange-100 hover:shadow-lg hover:border-orange-300 hover:-translate-y-1 transition-all group">
             <span className="text-3xl mb-1 group-hover:scale-110 transition-transform">🏃‍♂️</span>
-            <span className="font-bold text-gray-700 text-sm uppercase">DEPORTE DE {config.user1}</span>
+            <span className="font-bold text-gray-700 text-xs md:text-sm uppercase">DEPORTE DE {config.user1}</span>
         </a>
-
-        <a 
-            href={config.sportUrl2 || '#'} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="flex flex-col items-center justify-center p-4 bg-white rounded-2xl shadow-md border border-orange-100 hover:shadow-lg hover:border-orange-300 hover:-translate-y-1 transition-all group"
-        >
+        <a href={config.sportUrl2 || '#'} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center p-4 bg-white rounded-2xl shadow-md border border-orange-100 hover:shadow-lg hover:border-orange-300 hover:-translate-y-1 transition-all group">
             <span className="text-3xl mb-1 group-hover:scale-110 transition-transform">🏃‍♀️</span>
-            <span className="font-bold text-gray-700 text-sm uppercase">DEPORTE DE {config.user2}</span>
+            <span className="font-bold text-gray-700 text-xs md:text-sm uppercase">DEPORTE DE {config.user2}</span>
         </a>
       </div>
     </div>

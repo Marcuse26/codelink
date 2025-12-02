@@ -62,7 +62,6 @@ const CorkboardWidget = () => {
     <div className="relative w-full min-h-[400px] bg-[#d7c49e] rounded-xl border-[12px] border-[#8b5a2b] shadow-2xl p-6 overflow-hidden flex flex-col">
       <div className="flex justify-between items-center mb-6 relative z-10 shrink-0">
         <div className="bg-[#fdfbf7] px-4 py-2 shadow-md transform -rotate-1">
-            {/* TÍTULO LIMPIO SIN EMOJIS */}
             <h2 className="text-xl font-black text-[#5d3a1a] uppercase tracking-widest border-b-2 border-[#5d3a1a]">TABLÓN ({notes.length})</h2>
         </div>
         <button onClick={() => setShowInput(!showInput)} className="bg-white text-[#8b5a2b] px-4 py-2 rounded-full font-bold shadow-md hover:scale-105 transition hover:bg-gray-50 border-2 border-[#8b5a2b]">{showInput ? 'CERRAR' : '+ NOTA'}</button>
@@ -136,7 +135,6 @@ const TodoCard = ({ title, dbPath, userColor }: { title: string, dbPath: string,
       </form>
 
       <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
-        {/* ELIMINADO MENSAJE "Todo limpio" */}
         {tasks.map((task) => (
           <div key={task.id} className="group flex items-center justify-between bg-black/20 p-2 rounded-lg hover:bg-black/30 transition backdrop-blur-md border border-white/5">
             <div onClick={() => toggleTask(task)} className="flex items-center gap-3 cursor-pointer flex-1">

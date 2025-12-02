@@ -47,7 +47,6 @@ export default function CalendarioPage() {
   return (
     <div className="flex flex-col items-center justify-center space-y-10 py-10 w-full">
       
-      {/* TÍTULO Y SUBTÍTULO */}
       <div className="text-center px-4">
         <h1 className="text-2xl md:text-3xl font-black text-gray-800 uppercase tracking-widest">
             TIEMPO RESTANTE
@@ -59,7 +58,6 @@ export default function CalendarioPage() {
 
       <div className="bg-white rounded-[2rem] md:rounded-[2.5rem] shadow-xl border border-gray-200 p-6 md:p-10 flex flex-col items-center justify-center w-full max-w-2xl mx-auto transform hover:scale-[1.01] transition-transform duration-500">
         <div className="flex flex-row items-baseline justify-center gap-4 md:gap-6 mb-6">
-            {/* Tamaño adaptable para móvil (text-6xl) y escritorio (text-9xl) */}
             <span className="text-6xl md:text-9xl font-black text-gray-900 leading-none tracking-tighter">
                 {timeLeft.days}
             </span>
@@ -77,7 +75,6 @@ export default function CalendarioPage() {
         </div>
       </div>
 
-      {/* ENLACES A CALENDARIOS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl px-4 mt-32">
         <a href={config.calendarUrl1 || '#'} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-5 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all group">
             <div className="bg-blue-100 p-3 rounded-xl text-2xl group-hover:scale-110 transition-transform">📅</div>
