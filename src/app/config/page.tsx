@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { ref, set, onValue } from 'firebase/database';
+import { ref, set, onValue, get, remove, query, orderByChild, equalTo } from 'firebase/database';
 import { updateProfile, updatePassword, deleteUser, onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { db, auth } from '../../firebase/config';
@@ -83,12 +83,34 @@ export default function ConfigPage() {
     const confirm1 = window.confirm('¿Estás seguro de que quieres eliminar tu cuenta?');
     if (!confirm1) return;
 
-    const confirm2 = window.confirm('Esta acción es irreversible. ¿Seguro?');
+    const confirm2 = window.confirm('Esta acción borrará tus datos y liberará tu nombre de usuario. ¿Seguro?');
     if (!confirm2) return;
 
     try {
+      const userUid = auth.currentUser.uid;
+
+      // 1. Liberar nombre de usuario
+      // Buscamos en la lista 'usernames' cuál entrada pertenece a este UID
+      const usernamesRef = ref(db, 'usernames');
+      const q = query(usernamesRef, orderByChild('uid'), equalTo(userUid));
+      const snapshot = await get(q);
+
+      if (snapshot.exists()) {
+        const promises: Promise<void>[] = [];
+        snapshot.forEach((childSnapshot) => {
+            // Borramos la entrada del nombre de usuario (ej: usernames/juan123)
+            promises.push(remove(childSnapshot.ref));
+        });
+        await Promise.all(promises);
+      }
+
+      // 2. Borrar todos los datos de la app asociados al usuario (limpieza)
+      await remove(ref(db, `users/${userUid}`));
+
+      // 3. Finalmente, eliminar la cuenta de autenticación
       await deleteUser(auth.currentUser);
-      alert('Cuenta eliminada.');
+      
+      alert('Cuenta eliminada y nombre de usuario liberado.');
       router.push('/login');
     } catch (error: any) {
       if (error.code === 'auth/requires-recent-login') {
