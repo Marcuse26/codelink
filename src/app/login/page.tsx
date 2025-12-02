@@ -6,7 +6,8 @@ import {
   createUserWithEmailAndPassword, 
   updateProfile,
   sendPasswordResetEmail,
-  sendEmailVerification 
+  sendEmailVerification,
+  signOut 
 } from 'firebase/auth';
 import { ref, set, get, child } from 'firebase/database';
 import { auth, db } from '../../firebase/config';
@@ -39,20 +40,29 @@ export default function LoginPage() {
           throw new Error("Ese usuario ya existe, elige otro.");
         }
 
+        // 1. Crear el usuario
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        // ENVÍO DE CORREO DE VERIFICACIÓN
+        // 2. Enviar correo de verificación
         await sendEmailVerification(user);
 
+        // 3. Guardar datos en la base de datos
         await set(ref(db, 'usernames/' + username.toLowerCase()), {
           email: email,
           uid: user.uid
         });
 
         await updateProfile(user, { displayName: username });
-        alert('Cuenta creada con éxito. Se ha enviado un correo de verificación a tu email.');
-        router.push('/');
+
+        // --- CAMBIO CLAVE: Cerrar sesión inmediatamente ---
+        // Esto evita que entren automáticamente sin verificar
+        await signOut(auth);
+
+        alert('Cuenta creada con éxito. IMPORTANTE: Se ha enviado un correo de verificación a tu email. Debes validarlo antes de iniciar sesión.');
+        
+        // Volvemos a la pantalla de login para que inicien sesión manualmente tras verificar
+        setIsRegister(false); 
 
       } else {
         // --- LOGIN ---
@@ -64,7 +74,18 @@ export default function LoginPage() {
         }
 
         const registeredEmail = snapshot.val().email;
-        await signInWithEmailAndPassword(auth, registeredEmail, password);
+        
+        // Intentamos hacer login
+        const userCredential = await signInWithEmailAndPassword(auth, registeredEmail, password);
+        
+        // --- CAMBIO CLAVE: Comprobar verificación ---
+        if (!userCredential.user.emailVerified) {
+            // Si no está verificado, cerramos sesión y mostramos error
+            await signOut(auth);
+            throw new Error("Tu correo no ha sido verificado. Por favor, revisa tu bandeja de entrada (y spam) y pulsa en el enlace de verificación.");
+        }
+
+        // Si todo está correcto, redirigimos
         router.push('/');
       }
 
