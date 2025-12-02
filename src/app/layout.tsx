@@ -11,7 +11,7 @@ import { auth } from '../firebase/config';
 
 const inter = Inter({ subsets: ['latin'] });
 
-// --- ICONOS (Se mantienen para escritorio) ---
+// --- ICONOS ---
 const Icons = {
   Academic: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" /></svg>,
   Habits: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
@@ -75,9 +75,9 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
       {/* CONTENIDO PRINCIPAL */}
       <main className="flex flex-1 flex-col min-w-0 overflow-hidden bg-[#f0f2f5] relative">
         
-        {/* BARRA INFERIOR (Móvil) - ESTILO IMPACT / NARANJA */}
-        {/* Usamos 'bg-orange-500' y bordes para enmarcar cada elemento */}
-        <div className="md:hidden w-full h-[70px] bg-orange-500 shrink-0 flex items-stretch justify-center shadow-lg z-50 border-b-4 border-orange-700">
+        {/* BARRA INFERIOR (Móvil) - DISEÑO IMPACT */}
+        {/* Usamos border-black sólido y fondo naranja puro */}
+        <div className="md:hidden w-full h-[65px] shrink-0 flex items-stretch justify-center z-50 border-t-2 border-b-2 border-black bg-orange-500">
             
             <BottomNavLink href="/" active={pathname === '/'} label="ACAD." />
             <BottomNavLink href="/deporte" active={pathname === '/deporte'} label="SPORT" />
@@ -85,12 +85,12 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
             <BottomNavLink href="/calendario" active={pathname === '/calendario'} label="PLAN" />
             <BottomNavLink href="/config" active={pathname === '/config'} label="CONF" />
             
-            {/* BOTÓN SALIR INTEGRADO - FONDO ROJO PARA DIFERENCIAR */}
+            {/* BOTÓN SALIR - Fondo ROJO pero manteniendo bordes negros y texto negro */}
             <button 
                 onClick={() => signOut(auth)} 
-                className="flex-1 flex items-center justify-center bg-red-600 text-white border-r-2 border-red-800 active:bg-red-700 transition-colors"
+                className="flex-1 flex items-center justify-center bg-red-600 border-l-2 border-black active:bg-red-700 transition-colors"
             >
-                <span className="text-xs font-black uppercase tracking-tighter">SALIR</span>
+                <span className="text-sm font-black text-black uppercase tracking-tighter transform scale-y-110">SALIR</span>
             </button>
         </div>
 
@@ -112,21 +112,18 @@ const SidebarLink = ({ href, active, icon, label }: any) => (
   </Link>
 );
 
-// Componente BottomNavLink ESTILO IMPACT - TEXTO NEGRO
+// Componente Enlace Móvil - TEXTO NEGRO Y NEGRITA
 const BottomNavLink = ({ href, active, label }: any) => (
     <Link 
         href={href} 
         className={`
             flex-1 flex items-center justify-center 
-            border-r-2 border-orange-700 
+            border-r-2 border-black
             transition-all duration-200
-            ${active ? 'bg-orange-600' : 'bg-orange-500 hover:bg-orange-400'}
+            ${active ? 'bg-orange-400' : 'bg-orange-500 hover:bg-orange-400'}
         `}
     >
-      <span className={`
-        text-xs font-black uppercase tracking-tighter 
-        ${active ? 'text-black scale-110' : 'text-black/60'} 
-      `}>
+      <span className="text-sm font-black text-black uppercase tracking-tighter transform scale-y-110">
         {label}
       </span>
     </Link>
