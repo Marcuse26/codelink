@@ -93,19 +93,9 @@ const CorkboardWidget = ({ uid }: { uid: string }) => {
       )}
 
       <div className={`grid ${styles.grid} auto-rows-min transition-all duration-500 ease-in-out w-full content-start`}>
-        <div className={`relative shadow-md hover:shadow-xl transition-transform hover:scale-105 duration-300 group bg-white aspect-square ${styles.card} flex flex-col items-center justify-between text-center overflow-hidden w-full border border-gray-300 shadow-inner`} style={{ transform: 'rotate(-1deg)' }}>
-            <div className="flex flex-col items-center justify-center w-full h-full gap-1 pt-1">
-                <div className="w-full h-1/2 flex items-center justify-center p-1">
-                    <img src="/webea.png" alt="Webea" className="w-full h-full object-contain" />
-                </div>
-                <div className="w-full flex flex-col justify-center h-1/2 border-t border-gray-100 pt-1">
-                    <p className="text-[10px] font-black text-gray-800 leading-tight uppercase mb-1">Desarrollado por Webea</p>
-                    <div className="w-full">
-                        <p className="text-[9px] font-bold text-gray-500 leading-none mb-0.5">Soporte:</p>
-                        <p className="text-[9px] font-bold text-blue-600 break-all leading-tight">webea.oficial@gmail.com</p>
-                    </div>
-                </div>
-            </div>
+        {/* TARJETA WEBEA - SOLO LOGO */}
+        <div className={`relative shadow-md hover:shadow-xl transition-transform hover:scale-105 duration-300 group bg-white aspect-square ${styles.card} flex items-center justify-center text-center overflow-hidden w-full border border-gray-300 shadow-inner`} style={{ transform: 'rotate(-1deg)' }}>
+             <img src="/webea.png" alt="Webea" className="w-3/4 h-3/4 object-contain opacity-90 group-hover:opacity-100 transition-opacity" />
         </div>
 
         {notes.map((note) => {
