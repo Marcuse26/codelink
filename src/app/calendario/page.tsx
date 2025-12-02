@@ -7,6 +7,7 @@ export default function CalendarioPage() {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [config, setConfig] = useState({ 
     reunionDate: '', 
+    eventName: '', // Nuevo estado para el nombre del evento
     user1: 'Usuario 1', 
     user2: 'Usuario 2',
     calendarUrl1: '#',
@@ -46,10 +47,16 @@ export default function CalendarioPage() {
   return (
     <div className="flex flex-col items-center justify-center space-y-10 py-10 w-full">
       
-      {/* TÍTULO EN MAYÚSCULAS */}
-      <h1 className="text-3xl font-black text-gray-800 uppercase tracking-widest text-center">
-        TIEMPO RESTANTE
-      </h1>
+      {/* TÍTULO Y SUBTÍTULO */}
+      <div className="text-center">
+        <h1 className="text-3xl font-black text-gray-800 uppercase tracking-widest">
+            TIEMPO RESTANTE
+        </h1>
+        {/* Subtítulo dinámico para el evento */}
+        <h2 className="text-xl text-gray-500 font-bold uppercase tracking-wider mt-2">
+            PARA {config.eventName || 'EL EVENTO'}
+        </h2>
+      </div>
 
       <div className="bg-white rounded-[2.5rem] shadow-xl border border-gray-200 p-10 flex flex-col items-center justify-center w-full max-w-2xl mx-auto transform hover:scale-[1.01] transition-transform duration-500">
         <div className="flex flex-row items-baseline justify-center gap-6 mb-6">

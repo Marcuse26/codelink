@@ -9,9 +9,10 @@ export default function ConfigPage() {
     user2: '', 
     color1: '#3b82f6', 
     color2: '#ec4899', 
-    calendarUrl1: '', // Nueva URL 1
-    calendarUrl2: '', // Nueva URL 2
-    reunionDate: '' 
+    calendarUrl1: '', 
+    calendarUrl2: '', 
+    reunionDate: '',
+    eventName: '' // Nuevo campo para el nombre del evento
   });
 
   useEffect(() => {
@@ -80,15 +81,27 @@ export default function ConfigPage() {
         />
       </div>
 
-      {/* Fecha Reunion */}
-      <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
-        <label className="text-gray-400 text-sm font-bold uppercase tracking-wider mb-2 block">Fecha del Reencuentro 💖</label>
-        <input 
-            type="datetime-local"
-            className="w-full p-3 rounded-xl bg-black/30 text-white border border-white/10 outline-none focus:border-white/30 transition"
-            value={form.reunionDate}
-            onChange={e => setForm({...form, reunionDate: e.target.value})}
-        />
+      {/* Configuración del Evento */}
+      <div className="bg-white/5 p-6 rounded-2xl border border-white/10 space-y-4">
+        <div>
+            <label className="text-gray-400 text-sm font-bold uppercase tracking-wider mb-2 block">Nombre del Evento</label>
+            <input 
+                type="text"
+                placeholder="Ej: NUESTRO VIAJE, FIN DE EXÁMENES..."
+                className="w-full p-3 rounded-xl bg-black/30 text-white border border-white/10 outline-none focus:border-white/30 transition"
+                value={form.eventName}
+                onChange={e => setForm({...form, eventName: e.target.value})}
+            />
+        </div>
+        <div>
+            <label className="text-gray-400 text-sm font-bold uppercase tracking-wider mb-2 block">Fecha y Hora</label>
+            <input 
+                type="datetime-local"
+                className="w-full p-3 rounded-xl bg-black/30 text-white border border-white/10 outline-none focus:border-white/30 transition"
+                value={form.reunionDate}
+                onChange={e => setForm({...form, reunionDate: e.target.value})}
+            />
+        </div>
       </div>
 
       <button 

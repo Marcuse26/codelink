@@ -52,8 +52,8 @@ export default function DeportePage() {
 
   return (
     <div className="space-y-8 py-6 text-center max-w-md mx-auto">
-      {/* TÍTULO MAYÚSCULAS SIN EMOJI */}
-      <h1 className="text-3xl font-bold text-gray-800 uppercase">STRAVA & RACHA</h1>
+      {/* CAMBIO AQUI: Título simplificado */}
+      <h1 className="text-3xl font-bold text-gray-800 uppercase">STRAVA</h1>
       
       <div className={`p-8 rounded-3xl border shadow-xl transition-all duration-500 ${isCompletedToday ? 'bg-gradient-to-br from-orange-400 to-orange-600 border-orange-400' : 'bg-white border-orange-200'}`}>
         <p className={`uppercase text-sm font-bold tracking-widest ${isCompletedToday ? 'text-orange-100' : 'text-orange-500'}`}>
