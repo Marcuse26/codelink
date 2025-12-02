@@ -111,10 +111,11 @@ export default function LoginPage() {
         <div className="flex flex-col items-center justify-center mb-8 relative z-10">
             
             {/* Aquí usamos img estándar de HTML para evitar problemas de caché de Next.js */}
+            {/* CORRECCIÓN: Clases responsive añadidas (w-40 md:w-64) */}
             <img 
                 src="/logo.png" 
                 alt="CodeLink Logo" 
-                className="w-64 h-auto object-contain mb-4 drop-shadow-xl"
+                className="w-40 md:w-64 h-auto object-contain mb-4 drop-shadow-xl"
             />
             
             {/* Texto de estado (solo visible en registro/recuperación) */}
