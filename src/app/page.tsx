@@ -50,70 +50,71 @@ const CorkboardWidget = () => {
 
   const deleteNote = (id: string) => remove(ref(db, `notes/${id}`));
 
-  // ESTILOS FIJOS: Pósits pequeños (muchas columnas)
-  const styles = { 
-    grid: "grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8", 
-    card: "p-2", 
-    text: "text-[10px] md:text-xs font-bold leading-tight"
-  };
-
   return (
-    <div className="relative w-full max-w-full mx-auto min-h-[300px] md:min-h-[400px] bg-[#d7c49e] rounded-xl border-[8px] md:border-[12px] border-[#8b5a2b] shadow-2xl p-4 md:p-6 overflow-hidden flex flex-col box-border">
+    <div className="relative w-full max-w-full mx-auto min-h-[400px] bg-[#d7c49e] rounded-xl border-[8px] md:border-[12px] border-[#8b5a2b] shadow-2xl p-4 md:p-6 overflow-hidden flex flex-col box-border">
+      
+      {/* Cabecera del Tablón */}
       <div className="flex justify-between items-center mb-6 relative z-10 shrink-0">
         <div className="bg-[#fdfbf7] px-3 py-1 md:px-4 md:py-2 shadow-md transform -rotate-1">
             <h2 className="text-lg md:text-xl font-black text-[#5d3a1a] uppercase tracking-widest border-b-2 border-[#5d3a1a]">TABLÓN ({notes.length + 1})</h2>
         </div>
-        <button onClick={() => setShowInput(!showInput)} className="bg-white text-[#8b5a2b] px-3 py-1 md:px-4 md:py-2 rounded-full font-bold text-xs md:text-sm shadow-md hover:scale-105 transition hover:bg-gray-50 border-2 border-[#8b5a2b]">{showInput ? 'CERRAR' : '+ NOTA'}</button>
+        <button onClick={() => setShowInput(!showInput)} className="bg-white text-[#8b5a2b] px-3 py-1 md:px-4 md:py-2 rounded-full font-bold text-sm md:text-base shadow-md hover:scale-105 transition hover:bg-gray-50 border-2 border-[#8b5a2b]">{showInput ? 'CERRAR' : '+ NOTA'}</button>
       </div>
       
+      {/* Formulario Nueva Nota */}
       {showInput && (
-        <div className="absolute top-24 left-1/2 transform -translate-x-1/2 z-30 w-60 md:w-64 animate-in fade-in zoom-in duration-200">
+        <div className="absolute top-24 left-1/2 transform -translate-x-1/2 z-30 w-64 animate-in fade-in zoom-in duration-200">
           <form onSubmit={addNote} className="bg-yellow-100 p-4 shadow-[0_10px_20px_rgba(0,0,0,0.3)] rotate-1 border-t-8 border-yellow-200/50">
             <div className="w-4 h-4 rounded-full bg-red-600 mx-auto mb-3 shadow-[inset_0_-2px_4px_rgba(0,0,0,0.3)]"></div>
-            <textarea autoFocus className="w-full bg-transparent outline-none text-gray-800 text-base resize-none placeholder-gray-500/50 font-medium h-24" placeholder="Escribe algo..." value={newNoteText} onChange={e => setNewNoteText(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); addNote(e); } }} />
-            <button type="submit" className="w-full mt-2 bg-[#8b5a2b] text-white text-xs font-bold py-2 rounded shadow hover:bg-[#6d4621] transition">FIJAR NOTA</button>
+            <textarea autoFocus className="w-full bg-transparent outline-none text-gray-800 text-lg resize-none placeholder-gray-500/50 font-medium h-32" placeholder="Escribe algo..." value={newNoteText} onChange={e => setNewNoteText(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); addNote(e); } }} />
+            <button type="submit" className="w-full mt-2 bg-[#8b5a2b] text-white text-sm font-bold py-2 rounded shadow hover:bg-[#6d4621] transition">FIJAR NOTA</button>
           </form>
         </div>
       )}
 
-      {/* Grid de notas alineadas al inicio */}
-      <div className={`grid ${styles.grid} auto-rows-min gap-2 md:gap-4 transition-all duration-500 ease-in-out w-full content-start`}>
+      {/* GRID CONFIGURADO PARA NOTAS PEQUEÑAS (Cuadradas tipo Post-it)
+         - grid-cols-2 en móvil (pequeño)
+         - grid-cols-4 en tablet
+         - grid-cols-6 en PC (muy pequeño, 1/6 de pantalla)
+      */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 content-start w-full">
         
-        {/* --- NOTA FIJA WEBEA --- */}
-        <div className={`relative shadow-md hover:shadow-xl transition-transform hover:scale-105 duration-300 group bg-white aspect-square ${styles.card} flex flex-col items-center justify-between text-center overflow-hidden w-full border border-gray-300 shadow-inner`} style={{ transform: 'rotate(-1deg)' }}>
-            <div className="absolute -top-1.5 left-1/2 transform -translate-x-1/2 w-2 h-2 md:w-3 md:h-3 bg-red-600 rounded-full shadow-sm z-10 border border-red-800"></div>
+        {/* --- NOTA FIJA WEBEA (CUADRADA Y AJUSTADA) --- */}
+        <div className="relative aspect-square bg-white shadow-lg hover:scale-105 transition-transform duration-300 p-2 flex flex-col items-center justify-between text-center overflow-hidden border border-gray-300 shadow-inner rotate-[-2deg]">
+            {/* Chincheta */}
+            <div className="absolute -top-1.5 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-red-600 rounded-full shadow-sm z-10 border border-red-800"></div>
             
-            <div className="flex flex-col items-center justify-center w-full h-full gap-1 pt-1">
-                {/* Imagen centrada y ajustada (object-contain) */}
-                <div className="w-full h-1/2 flex items-center justify-center overflow-hidden">
-                    <img src="/webea.png" alt="Webea" className="w-full h-full object-contain p-1" />
-                </div>
-                <div className="w-full flex flex-col justify-center h-1/2">
-                    <p className="text-[8px] md:text-[10px] font-black text-gray-800 leading-tight uppercase mb-1">
-                        Desarrollado por Webea
+            {/* Contenedor Imagen (Mitad superior) */}
+            <div className="w-full h-1/2 flex items-center justify-center p-1">
+                <img src="/webea.png" alt="Webea" className="w-full h-full object-contain" />
+            </div>
+
+            {/* Contenedor Texto (Mitad inferior) */}
+            <div className="w-full h-1/2 flex flex-col justify-center border-t border-gray-100 pt-1">
+                <p className="text-[10px] md:text-xs font-black text-gray-800 leading-tight uppercase mb-1">
+                    Desarrollado por Webea
+                </p>
+                <div className="w-full">
+                    <p className="text-[8px] font-bold text-gray-400 leading-none mb-0.5">
+                        Soporte:
                     </p>
-                    <div className="pt-1 border-t border-gray-100 w-full">
-                        <p className="text-[6px] md:text-[8px] font-bold text-gray-400 leading-none mb-0.5">
-                            Soporte:
-                        </p>
-                        <p className="text-[6px] md:text-[8px] font-bold text-blue-600 break-all leading-tight">
-                            webea.oficial@gmail.com
-                        </p>
-                    </div>
+                    <p className="text-[7px] md:text-[8px] font-bold text-blue-600 break-all leading-tight">
+                        webea.oficial@gmail.com
+                    </p>
                 </div>
             </div>
         </div>
 
-        {/* --- NOTAS DINÁMICAS --- */}
+        {/* --- NOTAS DE USUARIO (CUADRADAS) --- */}
         {notes.map((note) => (
-          <div key={note.id} className={`relative shadow-md hover:shadow-xl transition-transform hover:scale-105 duration-300 group ${note.color} aspect-square ${styles.card} flex items-center justify-center text-center overflow-hidden w-full border border-white/40 shadow-[inset_0_0_10px_rgba(0,0,0,0.05)]`} style={{ transform: `rotate(${note.rotation}deg)` }}>
-            <div className="absolute -top-1.5 left-1/2 transform -translate-x-1/2 w-2 h-2 md:w-3 md:h-3 bg-red-600 rounded-full shadow-sm z-10 border border-red-800"></div>
+          <div key={note.id} className={`relative aspect-square ${note.color} shadow-lg hover:scale-105 transition-transform duration-300 p-3 flex items-center justify-center text-center overflow-hidden border border-white/40 shadow-[inset_0_0_20px_rgba(0,0,0,0.05)]`} style={{ transform: `rotate(${note.rotation}deg)` }}>
+            <div className="absolute -top-1.5 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-red-600 rounded-full shadow-sm z-10 border border-red-800"></div>
             
-            <p className={`text-gray-800 break-words w-full h-full flex items-center justify-center ${styles.text}`}>
+            <p className="text-xs md:text-sm font-bold text-gray-800 leading-snug break-words w-full h-full flex items-center justify-center overflow-y-auto custom-scrollbar">
                 {note.text}
             </p>
             
-            <button onClick={(e) => { e.stopPropagation(); deleteNote(note.id); }} className="absolute -bottom-1 -right-1 bg-red-500 text-white w-5 h-5 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all text-[10px] font-bold shadow-lg hover:bg-red-600 cursor-pointer z-20" title="Quitar">✕</button>
+            <button onClick={(e) => { e.stopPropagation(); deleteNote(note.id); }} className="absolute -bottom-1 -right-1 bg-red-500 text-white w-5 h-5 rounded-full flex items-center justify-center opacity-0 hover:opacity-100 transition-all text-xs font-bold shadow-lg hover:bg-red-600 cursor-pointer z-20" title="Quitar">✕</button>
           </div>
         ))}
       </div>
@@ -151,13 +152,13 @@ const TodoCard = ({ title, dbPath, userColor }: { title: string, dbPath: string,
 
   return (
     <div 
-        className="p-6 rounded-2xl text-white shadow-lg flex flex-col h-[400px] border border-white/5 w-full max-w-full overflow-hidden"
+        className="p-6 rounded-2xl text-white shadow-lg flex flex-col h-[400px] border border-white/5 w-full overflow-hidden"
         style={{ 
             background: `linear-gradient(145deg, ${userColor}, #0f0f1a)`,
             boxShadow: `0 10px 30px -10px ${userColor}60`
         }}
     >
-      <h3 className="text-xl md:text-2xl font-bold mb-4 border-b border-white/20 pb-2 uppercase truncate">TAREAS DE {title}</h3>
+      <h3 className="text-xl font-bold mb-4 border-b border-white/20 pb-2 uppercase truncate">TAREAS DE {title}</h3>
       
       <form onSubmit={addTask} className="flex gap-2 mb-4 w-full">
         <input type="text" value={newTask} onChange={(e) => setNewTask(e.target.value)} placeholder="Nueva tarea..." className="w-full bg-black/20 placeholder-white/50 text-white rounded-lg px-3 py-2 outline-none focus:bg-black/40 transition text-sm backdrop-blur-sm" />
@@ -207,7 +208,10 @@ export default function AgendaPage() {
   return (
     <div className="space-y-8 w-full max-w-full overflow-hidden">
       <CorkboardWidget />
-      {/* CAMBIO AQUÍ: grid-cols-1 para móvil, md:grid-cols-2 para tablet/PC */}
+      {/* AQUÍ ESTÁ LA CLAVE PARA LAS DOS COLUMNAS:
+         - grid-cols-1 (móvil) -> una columna
+         - md:grid-cols-2 (PC/Tablet) -> DOS columnas a la misma altura
+      */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
         <TodoCard title={config.user1} dbPath="tasks/user1" userColor={config.color1} />
         <TodoCard title={config.user2} dbPath="tasks/user2" userColor={config.color2} />
