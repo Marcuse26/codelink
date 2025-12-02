@@ -91,7 +91,7 @@ const CorkboardWidget = () => {
                 </div>
                 <div className="w-full flex flex-col justify-center h-1/2 border-t border-gray-100 pt-1">
                     <p className="text-[10px] font-black text-gray-800 leading-tight uppercase mb-0.5">
-                        Dev by Webea
+                        Desarrollado por Webea
                     </p>
                     <div className="w-full">
                         <p className="text-[9px] font-bold text-blue-600 break-all leading-tight">
