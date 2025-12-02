@@ -110,7 +110,6 @@ export default function LoginPage() {
         {/* CABECERA CON LOGO */}
         <div className="flex flex-col items-center justify-center mb-8 relative z-10">
             
-            {/* CORRECCIÓN: Logo adaptable con límites máximos */}
             <img 
                 src="/logo.png" 
                 alt="CodeLink Logo" 
@@ -133,7 +132,7 @@ export default function LoginPage() {
               value={username} 
               onChange={(e) => setUsername(e.target.value)} 
               className="w-full p-4 rounded-xl bg-black/40 border border-white/10 text-white placeholder-gray-600 focus:outline-none focus:border-pink-500 transition focus:ring-1 focus:ring-pink-500" 
-              placeholder="Ej: Marcos" 
+              // placeholder eliminado aquí
               required 
             />
           </div>
