@@ -19,7 +19,6 @@ interface Note {
 }
 
 // --- Helper para generar chinchetas estables basadas en el ID ---
-// Esto evita que la chincheta "baile" o cambie de color al renderizar
 const getPinStyle = (id: string) => {
   const pinColors = [
     'bg-red-600 border-red-800', 
@@ -29,11 +28,8 @@ const getPinStyle = (id: string) => {
     'bg-gray-800 border-black'
   ];
   
-  // Usamos el ID para generar un número pseudo-aleatorio consistente
   const hash = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  
   const colorClass = pinColors[hash % pinColors.length];
-  // Posición aleatoria entre 10% y 80% para que no se salga por los bordes
   const leftPos = (hash % 70) + 10; 
 
   return { colorClass, leftPos };
@@ -89,7 +85,6 @@ const CorkboardWidget = () => {
       {showInput && (
         <div className="absolute top-16 left-1/2 transform -translate-x-1/2 z-30 w-60 animate-in fade-in zoom-in duration-200">
           <form onSubmit={addNote} className="bg-yellow-100 p-4 shadow-[0_10px_20px_rgba(0,0,0,0.3)] rotate-1 border-t-8 border-yellow-200/50">
-            {/* Chincheta decorativa del formulario (la mantenemos solo aquí por estética del input) */}
             <div className="w-4 h-4 rounded-full bg-red-600 mx-auto mb-3 shadow-[inset_0_-2px_4px_rgba(0,0,0,0.3)] border border-red-800"></div>
             <textarea autoFocus className="w-full bg-transparent outline-none text-gray-900 text-lg font-bold resize-none placeholder-gray-500/50 h-24" placeholder="Escribe algo..." value={newNoteText} onChange={e => setNewNoteText(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); addNote(e); } }} />
             <button type="submit" className="w-full mt-2 bg-[#8b5a2b] text-white text-xs font-bold py-2 rounded shadow hover:bg-[#6d4621] transition">FIJAR NOTA</button>
@@ -99,21 +94,24 @@ const CorkboardWidget = () => {
 
       <div className={`grid ${styles.grid} auto-rows-min transition-all duration-500 ease-in-out w-full content-start`}>
         
-        {/* --- NOTA FIJA WEBEA (Sin chincheta ni punto) --- */}
+        {/* --- NOTA FIJA WEBEA --- */}
         <div className={`relative shadow-md hover:shadow-xl transition-transform hover:scale-105 duration-300 group bg-white aspect-square ${styles.card} flex flex-col items-center justify-between text-center overflow-hidden w-full border border-gray-300 shadow-inner`} style={{ transform: 'rotate(-1deg)' }}>
-            {/* SE HA ELIMINADO EL DIV DEL PUNTO ROJO AQUÍ */}
             
             <div className="flex flex-col items-center justify-center w-full h-full gap-1 pt-1">
                 <div className="w-full h-1/2 flex items-center justify-center p-1">
                     <img src="/webea.png" alt="Webea" className="w-full h-full object-contain" />
                 </div>
+                {/* CAMBIOS AQUÍ: Texto actualizado */}
                 <div className="w-full flex flex-col justify-center h-1/2 border-t border-gray-100 pt-1">
-                    <p className="text-[10px] font-black text-gray-800 leading-tight uppercase mb-0.5">
-                        Dev by Webea
+                    <p className="text-[10px] font-black text-gray-800 leading-tight uppercase mb-1">
+                        Desarrollado por Webea
                     </p>
                     <div className="w-full">
+                        <p className="text-[9px] font-bold text-gray-500 leading-none mb-0.5">
+                            Soporte:
+                        </p>
                         <p className="text-[9px] font-bold text-blue-600 break-all leading-tight">
-                            webea.oficial
+                            webea.oficial@gmail.com
                         </p>
                     </div>
                 </div>
@@ -122,22 +120,19 @@ const CorkboardWidget = () => {
 
         {/* --- NOTAS DINÁMICAS (Con chincheta aleatoria) --- */}
         {notes.map((note) => {
-          const { colorClass, leftPos } = getPinStyle(note.id); // Generar estilo de chincheta
+          const { colorClass, leftPos } = getPinStyle(note.id);
           
           return (
             <div key={note.id} className={`relative shadow-md hover:shadow-xl transition-transform hover:scale-105 duration-300 group ${note.color} aspect-square ${styles.card} flex items-center justify-center text-center overflow-hidden w-full border border-white/40 shadow-[inset_0_0_10px_rgba(0,0,0,0.05)]`} style={{ transform: `rotate(${note.rotation}deg)` }}>
               
-              {/* --- CHINCHETA ALEATORIA --- */}
-              {/* Se ha sustituido el punto rojo central por esto: */}
+              {/* Chincheta aleatoria */}
               <div 
                 className={`absolute -top-2 w-3 h-3 md:w-4 md:h-4 rounded-full shadow-[2px_2px_5px_rgba(0,0,0,0.3)] z-20 border ${colorClass}`} 
                 style={{ left: `${leftPos}%` }}
               >
-                {/* Brillo de la chincheta */}
                 <div className="absolute top-1 left-1 w-1 h-1 bg-white/50 rounded-full"></div>
               </div>
               
-              {/* Texto de las notas */}
               <p className={`text-gray-900 break-words w-full h-full flex items-center justify-center overflow-y-auto custom-scrollbar ${styles.text}`}>
                   {note.text}
               </p>
