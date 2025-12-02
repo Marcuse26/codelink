@@ -11,7 +11,10 @@ import { auth } from '../firebase/config';
 
 const inter = Inter({ subsets: ['latin'] });
 
-// --- ICONOS ---
+// ... (MANTÉN TUS ICONOS AQUÍ IGUAL QUE ANTES) ...
+// He omitido el bloque "const Icons = {...}" para ahorrar espacio, 
+// pero NO lo borres de tu archivo.
+
 const Icons = {
   Academic: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" /></svg>,
   Habits: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
@@ -22,6 +25,7 @@ const Icons = {
 };
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
+  // ... (MANTÉN TU CÓDIGO DEL LAYOUT IGUAL QUE ANTES) ...
   const { user, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
@@ -45,8 +49,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="flex h-screen w-full max-w-[100vw] bg-[#f0f2f5] font-sans overflow-hidden">
-      
-      {/* SIDEBAR (Escritorio) */}
       <aside className="hidden md:flex w-[260px] flex-col justify-between border-r border-[#e9ecef] bg-white p-5 shrink-0">
         <div>
           <div className="mb-8 flex justify-center py-4 border-b border-[#f1f3f5]">
@@ -72,19 +74,13 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         </div>
       </aside>
 
-      {/* CONTENIDO PRINCIPAL */}
       <main className="flex flex-1 flex-col min-w-0 overflow-hidden bg-[#f0f2f5] relative">
-        
-        {/* BARRA INFERIOR (Móvil) - DISEÑO IMPACT */}
         <div className="md:hidden w-full h-[65px] shrink-0 flex items-stretch justify-center z-50 border-t-2 border-b-2 border-black bg-orange-500">
-            
             <BottomNavLink href="/" active={pathname === '/'} label="ACAD." />
             <BottomNavLink href="/deporte" active={pathname === '/deporte'} label="SPORT" />
             <BottomNavLink href="/habitos" active={pathname === '/habitos'} label="HABIT" />
             <BottomNavLink href="/calendario" active={pathname === '/calendario'} label="PLAN" />
             <BottomNavLink href="/config" active={pathname === '/config'} label="CONF" />
-            
-            {/* BOTÓN SALIR */}
             <button 
                 onClick={() => signOut(auth)} 
                 className="flex-1 flex items-center justify-center bg-red-600 border-l-2 border-black active:bg-red-700 transition-colors"
@@ -92,14 +88,11 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
                 <span className="text-sm font-black text-black uppercase tracking-tighter transform scale-y-110">SALIR</span>
             </button>
         </div>
-
-        {/* ÁREA DE CONTENIDO */}
         <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-8">
            <div className="mx-auto max-w-6xl pt-2 md:pt-0">
               {children}
            </div>
         </div>
-
       </main>
     </div>
   );
@@ -111,7 +104,6 @@ const SidebarLink = ({ href, active, icon, label }: any) => (
   </Link>
 );
 
-// Componente Enlace Móvil
 const BottomNavLink = ({ href, active, label }: any) => (
     <Link 
         href={href} 
@@ -135,15 +127,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <title>CodeLink</title>
         <meta name="description" content="Tu espacio compartido" />
         <meta name="theme-color" content="#1a1a2e" />
-        
-        {/* ICONO PARA PESTAÑAS Y MARCADORES */}
         <link rel="icon" type="image/png" href="/codelink-icon.png" />
         <link rel="shortcut icon" href="/codelink-icon.png" />
-        
-        {/* ICONO PARA IOS (IPHONE/IPAD) */}
         <link rel="apple-touch-icon" href="/codelink-icon.png" />
-        
-        {/* MANIFEST PARA LA INSTALACIÓN */}
         <link rel="manifest" href="/manifest.json" />
       </head>
       <body className={inter.className}>

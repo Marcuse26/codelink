@@ -14,6 +14,9 @@ const withPWA = require("@ducanh2912/next-pwa").default({
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
+  // Esta línea soluciona el ERROR ROJO de tu captura (Next 16 Turbopack)
+  // @ts-ignore
+  turbopack: {}, 
 };
 
 export default withPWA(nextConfig);
