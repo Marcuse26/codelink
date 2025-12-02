@@ -10,7 +10,6 @@ import {
 import { ref, set, get, child } from 'firebase/database';
 import { auth, db } from '../../firebase/config';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image'; // Importamos el componente de imagen
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -108,20 +107,15 @@ export default function LoginPage() {
         <div className="absolute -top-10 -right-10 w-32 h-32 bg-pink-500/20 rounded-full blur-3xl"></div>
         <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl"></div>
 
-        {/* CABECERA CON LOGO */}
+        {/* CABECERA CON LOGO (USANDO IMG NORMAL) */}
         <div className="flex flex-col items-center justify-center mb-8 relative z-10">
-            {/* Logo con dimensiones fijas para evitar errores de carga */}
-            <div className="mb-4">
-                <Image 
-                    src="/logo.png" 
-                    alt="CodeLink Logo" 
-                    width={280} 
-                    height={100} 
-                    className="object-contain" // Asegura que el logo se vea entero
-                    priority // Carga prioritaria para que aparezca rápido
-                    style={{ width: 'auto', height: 'auto' }} // Mantiene proporción
-                />
-            </div>
+            
+            {/* Aquí usamos img estándar de HTML para evitar problemas de caché de Next.js */}
+            <img 
+                src="/logo.png" 
+                alt="CodeLink Logo" 
+                className="w-64 h-auto object-contain mb-4 drop-shadow-xl"
+            />
             
             {/* Texto de estado (solo visible en registro/recuperación) */}
             <p className="text-gray-400 text-xs uppercase tracking-widest font-bold">
