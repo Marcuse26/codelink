@@ -112,8 +112,7 @@ const SidebarLink = ({ href, active, icon, label }: any) => (
   </Link>
 );
 
-// Componente BottomNavLink ESTILO IMPACT
-// Sin iconos, solo texto grande, negrita, enmarcado con bordes
+// Componente BottomNavLink ESTILO IMPACT - TEXTO NEGRO
 const BottomNavLink = ({ href, active, label }: any) => (
     <Link 
         href={href} 
@@ -126,7 +125,7 @@ const BottomNavLink = ({ href, active, label }: any) => (
     >
       <span className={`
         text-xs font-black uppercase tracking-tighter 
-        ${active ? 'text-white scale-110' : 'text-orange-900/70'}
+        ${active ? 'text-black scale-110' : 'text-black/60'} 
       `}>
         {label}
       </span>
