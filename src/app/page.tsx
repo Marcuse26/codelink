@@ -51,11 +51,10 @@ const CorkboardWidget = () => {
   const deleteNote = (id: string) => remove(ref(db, `notes/${id}`));
 
   // ESTILOS FIJOS:
-  // grid-cols-3 en móvil y grid-cols-6 o 8 en PC para que los posit sean SIEMPRE pequeños.
   const styles = { 
     grid: "grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8", 
-    card: "p-3", // Más padding interno
-    text: "text-xs md:text-sm font-bold" // Texto más grande y negrita
+    card: "p-3", 
+    text: "text-xs md:text-sm font-bold"
   };
 
   return (
@@ -81,18 +80,14 @@ const CorkboardWidget = () => {
       <div className={`grid ${styles.grid} auto-rows-min gap-3 md:gap-5 transition-all duration-500 ease-in-out w-full content-start`}>
         
         {/* --- NOTA FIJA WEBEA --- */}
-        <div className={`relative shadow-md hover:shadow-xl transition-transform hover:scale-105 duration-300 group bg-white aspect-square ${styles.card} flex flex-col items-center justify-between text-center overflow-hidden w-full`} style={{ transform: 'rotate(-1deg)' }}>
-            {/* Chincheta */}
+        {/* AÑADIDO: border border-gray-300 y shadow-inner para efecto papel */}
+        <div className={`relative shadow-md hover:shadow-xl transition-transform hover:scale-105 duration-300 group bg-white aspect-square ${styles.card} flex flex-col items-center justify-between text-center overflow-hidden w-full border border-gray-300 shadow-inner`} style={{ transform: 'rotate(-1deg)' }}>
             <div className="absolute -top-1.5 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-red-600 rounded-full shadow-sm z-10 border border-red-800"></div>
             
-            {/* Contenido Nota Fija */}
             <div className="flex flex-col items-center justify-center w-full h-full gap-1 pt-2">
-                {/* Imagen ajustada para no recortarse (object-contain) y altura controlada */}
                 <div className="w-full h-1/2 flex items-center justify-center">
                     <img src="/webea.png" alt="Webea" className="w-full h-full object-contain" />
                 </div>
-                
-                {/* Texto más grande y legible */}
                 <div className="w-full flex flex-col justify-center h-1/2">
                     <p className="text-[10px] md:text-xs font-black text-gray-800 leading-tight uppercase">
                         Desarrollado por Webea
@@ -110,11 +105,11 @@ const CorkboardWidget = () => {
         </div>
 
         {/* --- NOTAS DINÁMICAS --- */}
+        {/* AÑADIDO: border border-white/40 y shadow-[inset...] para efecto textura/arrugado sutil */}
         {notes.map((note) => (
-          <div key={note.id} className={`relative shadow-md hover:shadow-xl transition-transform hover:scale-105 duration-300 group ${note.color} aspect-square ${styles.card} flex items-center justify-center text-center overflow-hidden w-full`} style={{ transform: `rotate(${note.rotation}deg)` }}>
+          <div key={note.id} className={`relative shadow-md hover:shadow-xl transition-transform hover:scale-105 duration-300 group ${note.color} aspect-square ${styles.card} flex items-center justify-center text-center overflow-hidden w-full border border-white/40 shadow-[inset_0_0_20px_rgba(0,0,0,0.05)]`} style={{ transform: `rotate(${note.rotation}deg)` }}>
             <div className="absolute -top-1.5 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-red-600 rounded-full shadow-sm z-10 border border-red-800"></div>
             
-            {/* Texto de nota normal más grande */}
             <p className={`text-gray-800 leading-snug break-words w-full h-full flex items-center justify-center ${styles.text}`}>
                 {note.text}
             </p>
