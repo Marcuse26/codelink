@@ -11,8 +11,8 @@ export default function ConfigPage() {
     color2: '#ec4899', 
     calendarUrl1: '', 
     calendarUrl2: '',
-    sportUrl1: '', // Nuevo campo Deporte 1
-    sportUrl2: '', // Nuevo campo Deporte 2
+    sportUrl1: '',
+    sportUrl2: '',
     reunionDate: '',
     eventName: '' 
   });
@@ -31,12 +31,13 @@ export default function ConfigPage() {
 
   return (
     <div className="p-6 space-y-8 max-w-2xl mx-auto">
-      <h1 className="text-3xl font-black text-white text-center mb-8">Ajustes Generales</h1>
+      <h1 className="text-3xl font-black text-white text-center mb-8 uppercase">AJUSTES</h1>
       
       {/* Sección Usuario 1 */}
       <div className="bg-white/5 p-6 rounded-2xl border border-white/10 space-y-3">
         <label className="text-gray-400 text-sm font-bold uppercase tracking-wider mb-2 block">Usuario 1</label>
-        <div className="flex gap-4">
+        {/* CAMBIO AQUI: flex-col en móvil, md:flex-row en escritorio */}
+        <div className="flex flex-col md:flex-row gap-4">
             <input 
                 className="flex-1 p-3 rounded-xl bg-black/30 text-white border border-white/10 outline-none focus:border-white/30 transition"
                 placeholder="Nombre"
@@ -45,7 +46,7 @@ export default function ConfigPage() {
             />
             <input 
                 type="color"
-                className="w-14 h-12 rounded-xl bg-transparent cursor-pointer border-0 p-0"
+                className="w-full md:w-14 h-12 rounded-xl bg-transparent cursor-pointer border-0 p-0"
                 value={form.color1}
                 onChange={e => setForm({...form, color1: e.target.value})}
             />
@@ -67,7 +68,7 @@ export default function ConfigPage() {
       {/* Sección Usuario 2 */}
       <div className="bg-white/5 p-6 rounded-2xl border border-white/10 space-y-3">
         <label className="text-gray-400 text-sm font-bold uppercase tracking-wider mb-2 block">Usuario 2</label>
-        <div className="flex gap-4">
+        <div className="flex flex-col md:flex-row gap-4">
             <input 
                 className="flex-1 p-3 rounded-xl bg-black/30 text-white border border-white/10 outline-none focus:border-white/30 transition"
                 placeholder="Nombre"
@@ -76,7 +77,7 @@ export default function ConfigPage() {
             />
             <input 
                 type="color"
-                className="w-14 h-12 rounded-xl bg-transparent cursor-pointer border-0 p-0"
+                className="w-full md:w-14 h-12 rounded-xl bg-transparent cursor-pointer border-0 p-0"
                 value={form.color2}
                 onChange={e => setForm({...form, color2: e.target.value})}
             />
@@ -122,7 +123,7 @@ export default function ConfigPage() {
         onClick={save} 
         className="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-white font-bold text-lg shadow-lg hover:scale-[1.02] transition-transform"
       >
-        Guardar Cambios
+        GUARDAR CAMBIOS
       </button>
     </div>
   );

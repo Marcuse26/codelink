@@ -13,11 +13,11 @@ const inter = Inter({ subsets: ['latin'] });
 
 // --- ICONOS ---
 const Icons = {
-  Academic: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" /></svg>,
-  Habits: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
-  Sport: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>,
-  Heart: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>,
-  Settings: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /></svg>,
+  Academic: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" /></svg>,
+  Habits: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+  Sport: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>,
+  Heart: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>,
+  Settings: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /></svg>,
   Logout: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
 };
 
@@ -46,8 +46,8 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex h-screen w-full bg-[#f8f9fa] font-sans overflow-hidden">
       
-      {/* SIDEBAR */}
-      <aside className="w-[260px] flex flex-col justify-between border-r border-[#e9ecef] bg-white p-5 shrink-0">
+      {/* SIDEBAR (Desktop) - Oculto en móvil (hidden md:flex) */}
+      <aside className="hidden md:flex w-[260px] flex-col justify-between border-r border-[#e9ecef] bg-white p-5 shrink-0">
         <div>
           <div className="mb-8 flex justify-center py-4 border-b border-[#f1f3f5]">
             <h1 className="text-2xl font-black bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">
@@ -57,7 +57,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
           <h2 className="mb-3 px-3 text-xs font-bold uppercase tracking-widest text-gray-500">General</h2>
           <nav className="space-y-1">
-            {/* TEXTOS EN MAYÚSCULAS */}
             <SidebarLink href="/" active={pathname === '/'} icon={<Icons.Academic />} label="ACADÉMICO" />
             <SidebarLink href="/deporte" active={pathname === '/deporte'} icon={<Icons.Sport />} label="DEPORTE" />
             <SidebarLink href="/habitos" active={pathname === '/habitos'} icon={<Icons.Habits />} label="HÁBITOS" />
@@ -78,34 +77,51 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
       </aside>
 
       {/* CONTENIDO PRINCIPAL */}
-      <main className="flex flex-1 flex-col overflow-hidden bg-[#f0f2f5]">
-        <header className="flex h-[80px] shrink-0 items-center justify-between border-b border-[#e9ecef] bg-white px-8">
-          <h1 className="text-2xl font-bold text-[#212529]">
-            {/* TÍTULOS EN MAYÚSCULAS Y SIN EMOJIS */}
+      <main className="flex flex-1 flex-col overflow-hidden bg-[#f0f2f5] pb-24 md:pb-0 relative">
+        <header className="flex h-[70px] md:h-[80px] shrink-0 items-center justify-between border-b border-[#e9ecef] bg-white px-4 md:px-8">
+          <h1 className="text-lg md:text-2xl font-bold text-[#212529] truncate">
             {pathname === '/' ? 'ACADÉMICO' : 
              pathname === '/habitos' ? 'HÁBITOS' : 
              pathname === '/deporte' ? 'DEPORTE' : 
              pathname === '/calendario' ? 'PLANING' : 'AJUSTES'}
           </h1>
-          <button onClick={() => signOut(auth)} className="flex items-center gap-2 rounded-lg bg-red-50 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-100">
-            <Icons.Logout /> SALIR
+          <button onClick={() => signOut(auth)} className="flex items-center gap-2 rounded-lg bg-red-50 px-3 py-2 text-xs md:text-sm font-medium text-red-600 transition hover:bg-red-100">
+            <Icons.Logout /> <span className="hidden md:inline">SALIR</span>
           </button>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-8">
+        <div className="flex-1 overflow-y-auto p-4 md:p-8">
            <div className="mx-auto max-w-6xl">
               {children}
            </div>
+        </div>
+
+        {/* BOTTOM NAVIGATION (Móvil) - Oculto en desktop (flex md:hidden) */}
+        <div className="fixed bottom-0 left-0 w-full h-[80px] bg-white border-t border-gray-200 flex md:hidden items-center justify-around z-50 pb-2">
+            <BottomNavLink href="/" active={pathname === '/'} icon={<Icons.Academic />} label="Académico" />
+            <BottomNavLink href="/deporte" active={pathname === '/deporte'} icon={<Icons.Sport />} label="Deporte" />
+            <BottomNavLink href="/habitos" active={pathname === '/habitos'} icon={<Icons.Habits />} label="Hábitos" />
+            <BottomNavLink href="/calendario" active={pathname === '/calendario'} icon={<Icons.Heart />} label="Planing" />
+            <BottomNavLink href="/config" active={pathname === '/config'} icon={<Icons.Settings />} label="Ajustes" />
         </div>
       </main>
     </div>
   );
 };
 
+// Componente Enlace Sidebar (Desktop)
 const SidebarLink = ({ href, active, icon, label }: any) => (
   <Link href={href} className={`flex w-full items-center gap-3 rounded-lg px-4 py-3 text-[15px] transition-all duration-200 ${active ? 'bg-pink-50 text-pink-600 font-semibold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}`}>
     <span className={active ? 'text-pink-600' : 'text-gray-400'}>{icon}</span> {label}
   </Link>
+);
+
+// Componente Enlace Inferior (Móvil)
+const BottomNavLink = ({ href, active, icon, label }: any) => (
+    <Link href={href} className={`flex flex-col items-center justify-center w-full h-full gap-1 transition-all ${active ? 'text-pink-600' : 'text-gray-400'}`}>
+      <span className={`${active ? 'scale-110' : ''} transition-transform`}>{icon}</span>
+      <span className="text-[10px] font-bold uppercase tracking-wide">{label}</span>
+    </Link>
 );
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
