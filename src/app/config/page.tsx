@@ -10,9 +10,11 @@ export default function ConfigPage() {
     color1: '#3b82f6', 
     color2: '#ec4899', 
     calendarUrl1: '', 
-    calendarUrl2: '', 
+    calendarUrl2: '',
+    sportUrl1: '', // Nuevo campo Deporte 1
+    sportUrl2: '', // Nuevo campo Deporte 2
     reunionDate: '',
-    eventName: '' // Nuevo campo para el nombre del evento
+    eventName: '' 
   });
 
   useEffect(() => {
@@ -32,9 +34,9 @@ export default function ConfigPage() {
       <h1 className="text-3xl font-black text-white text-center mb-8">Ajustes Generales</h1>
       
       {/* Sección Usuario 1 */}
-      <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
+      <div className="bg-white/5 p-6 rounded-2xl border border-white/10 space-y-3">
         <label className="text-gray-400 text-sm font-bold uppercase tracking-wider mb-2 block">Usuario 1</label>
-        <div className="flex gap-4 mb-3">
+        <div className="flex gap-4">
             <input 
                 className="flex-1 p-3 rounded-xl bg-black/30 text-white border border-white/10 outline-none focus:border-white/30 transition"
                 placeholder="Nombre"
@@ -50,16 +52,22 @@ export default function ConfigPage() {
         </div>
         <input 
             className="w-full p-3 rounded-xl bg-black/30 text-white border border-white/10 outline-none focus:border-white/30 transition text-sm"
-            placeholder="URL del Calendario (ej: https://calendar.google.com/...)"
+            placeholder="URL del Calendario"
             value={form.calendarUrl1}
             onChange={e => setForm({...form, calendarUrl1: e.target.value})}
+        />
+        <input 
+            className="w-full p-3 rounded-xl bg-black/30 text-white border border-white/10 outline-none focus:border-white/30 transition text-sm"
+            placeholder="URL de Deporte (Strava...)"
+            value={form.sportUrl1}
+            onChange={e => setForm({...form, sportUrl1: e.target.value})}
         />
       </div>
 
       {/* Sección Usuario 2 */}
-      <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
+      <div className="bg-white/5 p-6 rounded-2xl border border-white/10 space-y-3">
         <label className="text-gray-400 text-sm font-bold uppercase tracking-wider mb-2 block">Usuario 2</label>
-        <div className="flex gap-4 mb-3">
+        <div className="flex gap-4">
             <input 
                 className="flex-1 p-3 rounded-xl bg-black/30 text-white border border-white/10 outline-none focus:border-white/30 transition"
                 placeholder="Nombre"
@@ -79,6 +87,12 @@ export default function ConfigPage() {
             value={form.calendarUrl2}
             onChange={e => setForm({...form, calendarUrl2: e.target.value})}
         />
+        <input 
+            className="w-full p-3 rounded-xl bg-black/30 text-white border border-white/10 outline-none focus:border-white/30 transition text-sm"
+            placeholder="URL de Deporte (Strava...)"
+            value={form.sportUrl2}
+            onChange={e => setForm({...form, sportUrl2: e.target.value})}
+        />
       </div>
 
       {/* Configuración del Evento */}
@@ -87,7 +101,7 @@ export default function ConfigPage() {
             <label className="text-gray-400 text-sm font-bold uppercase tracking-wider mb-2 block">Nombre del Evento</label>
             <input 
                 type="text"
-                placeholder="Ej: NUESTRO VIAJE, FIN DE EXÁMENES..."
+                placeholder="Ej: NUESTRO VIAJE"
                 className="w-full p-3 rounded-xl bg-black/30 text-white border border-white/10 outline-none focus:border-white/30 transition"
                 value={form.eventName}
                 onChange={e => setForm({...form, eventName: e.target.value})}
