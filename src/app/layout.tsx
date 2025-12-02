@@ -44,9 +44,10 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   if (!user) return null;
 
   return (
-    <div className="flex h-screen w-full bg-[#f0f2f5] font-sans overflow-hidden">
+    // CORRECCIÓN 1: max-w-[100vw] y overflow-hidden en el contenedor raíz
+    <div className="flex h-screen w-full max-w-[100vw] bg-[#f0f2f5] font-sans overflow-hidden">
       
-      {/* SIDEBAR (Solo Escritorio) */}
+      {/* SIDEBAR (Escritorio) */}
       <aside className="hidden md:flex w-[260px] flex-col justify-between border-r border-[#e9ecef] bg-white p-5 shrink-0">
         <div>
           <div className="mb-8 flex justify-center py-4 border-b border-[#f1f3f5]">
@@ -54,6 +55,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
               CodeLink 💖
             </h1>
           </div>
+
           <nav className="space-y-1">
             <SidebarLink href="/" active={pathname === '/'} icon={<Icons.Academic />} label="ACADÉMICO" />
             <SidebarLink href="/deporte" active={pathname === '/deporte'} icon={<Icons.Sport />} label="DEPORTE" />
@@ -62,6 +64,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
             <SidebarLink href="/config" active={pathname === '/config'} icon={<Icons.Settings />} label="AJUSTES" />
           </nav>
         </div>
+
         <div>
           <button onClick={() => signOut(auth)} className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-[15px] font-semibold text-red-600 hover:bg-red-50 transition-all duration-200">
             <Icons.Logout /> SALIR
@@ -72,39 +75,36 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         </div>
       </aside>
 
-      {/* CONTENEDOR PRINCIPAL */}
-      <main className="flex flex-1 flex-col overflow-hidden bg-[#f0f2f5] relative">
+      {/* CONTENIDO PRINCIPAL */}
+      {/* CORRECCIÓN 2: min-w-0 para evitar que el contenido fuerce el ancho en Flexbox */}
+      <main className="flex flex-1 flex-col min-w-0 overflow-hidden bg-[#f0f2f5] relative">
         
-        {/* BARRA DE NAVEGACIÓN (Solo Móvil) - AHORA ARRIBA Y SIN SUPERPOSICIÓN */}
-        {/* Usamos flex-col en Main para que esta barra empuje el contenido hacia abajo */}
-        <div className="md:hidden w-full h-[80px] bg-blue-600 shrink-0 flex items-center justify-around shadow-md z-50">
-            <BottomNavLink href="/" active={pathname === '/'} icon={<Icons.Academic />} label="ACADÉMICO" />
-            <BottomNavLink href="/deporte" active={pathname === '/deporte'} icon={<Icons.Sport />} label="DEPORTE" />
-            <BottomNavLink href="/habitos" active={pathname === '/habitos'} icon={<Icons.Habits />} label="HÁBITOS" />
-            <BottomNavLink href="/calendario" active={pathname === '/calendario'} icon={<Icons.Heart />} label="PLANING" />
-            <BottomNavLink href="/config" active={pathname === '/config'} icon={<Icons.Settings />} label="AJUSTES" />
-            
-            {/* Botón Salir integrado */}
-            <button onClick={() => signOut(auth)} className="flex flex-col items-center justify-center w-full h-full gap-1 text-red-200 hover:text-white transition-colors">
-                <span className="scale-90"><Icons.Logout /></span>
-                <span className="text-[8px] font-bold uppercase tracking-wide">SALIR</span>
-            </button>
-        </div>
-
-        {/* ÁREA DE CONTENIDO CON SCROLL */}
-        {/* Este div ocupa todo el espacio restante. El contenido empieza DEBAJO de la barra azul */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-8">
-           <div className="mx-auto max-w-6xl pt-2 md:pt-0">
+        {/* CORRECCIÓN 3: overflow-x-hidden en el área de scroll */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 pb-32 md:p-8 md:pb-8">
+           <div className="mx-auto max-w-6xl pt-4 md:pt-0">
               {children}
            </div>
         </div>
 
+        {/* BARRA INFERIOR (Móvil) - AZUL DIFERENCIADA */}
+        <div className="fixed bottom-0 left-0 w-full h-[80px] bg-blue-600 flex md:hidden items-center justify-around z-50 pb-2 shadow-[0_-5px_20px_rgba(0,0,0,0.3)]">
+            <BottomNavLink href="/" active={pathname === '/'} icon={<Icons.Academic />} label="Académico" />
+            <BottomNavLink href="/deporte" active={pathname === '/deporte'} icon={<Icons.Sport />} label="Deporte" />
+            <BottomNavLink href="/habitos" active={pathname === '/habitos'} icon={<Icons.Habits />} label="Hábitos" />
+            <BottomNavLink href="/calendario" active={pathname === '/calendario'} icon={<Icons.Heart />} label="Planing" />
+            <BottomNavLink href="/config" active={pathname === '/config'} icon={<Icons.Settings />} label="Ajustes" />
+            
+            {/* BOTÓN SALIR */}
+            <button onClick={() => signOut(auth)} className="flex flex-col items-center justify-center w-full h-full gap-1 text-red-200 hover:text-white transition-colors">
+                <span className="scale-90"><Icons.Logout /></span>
+                <span className="text-[9px] font-bold uppercase tracking-wide">Salir</span>
+            </button>
+        </div>
       </main>
     </div>
   );
 };
 
-// Componentes de Enlace
 const SidebarLink = ({ href, active, icon, label }: any) => (
   <Link href={href} className={`flex w-full items-center gap-3 rounded-lg px-4 py-3 text-[15px] transition-all duration-200 ${active ? 'bg-pink-50 text-pink-600 font-semibold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}`}>
     <span className={active ? 'text-pink-600' : 'text-gray-400'}>{icon}</span> {label}
@@ -112,10 +112,9 @@ const SidebarLink = ({ href, active, icon, label }: any) => (
 );
 
 const BottomNavLink = ({ href, active, icon, label }: any) => (
-    <Link href={href} className={`flex flex-col items-center justify-center w-full h-full gap-1 transition-all ${active ? 'text-white' : 'text-blue-300 hover:text-blue-100'}`}>
-      <span className={`${active ? 'scale-110' : 'scale-90'} transition-transform`}>{icon}</span>
-      {/* Texto más pequeño para que quepa todo */}
-      <span className={`text-[8px] font-bold uppercase tracking-wide ${active ? 'opacity-100' : 'opacity-70'}`}>{label}</span>
+    <Link href={href} className={`flex flex-col items-center justify-center w-full h-full gap-1 transition-all ${active ? 'text-white scale-110' : 'text-blue-200 hover:text-blue-100'}`}>
+      <span className="transition-transform">{icon}</span>
+      <span className="text-[9px] font-bold uppercase tracking-wide">{label}</span>
     </Link>
 );
 
