@@ -1,4 +1,3 @@
-import_file_code = """
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -18,6 +17,27 @@ interface Note {
   color: string;
   rotation: number;
 }
+
+// --- Helper para generar chinchetas estables basadas en el ID ---
+// Esto evita que la chincheta "baile" o cambie de color al renderizar
+const getPinStyle = (id: string) => {
+  const pinColors = [
+    'bg-red-600 border-red-800', 
+    'bg-blue-600 border-blue-800', 
+    'bg-green-600 border-green-800', 
+    'bg-purple-600 border-purple-800', 
+    'bg-gray-800 border-black'
+  ];
+  
+  // Usamos el ID para generar un número pseudo-aleatorio consistente
+  const hash = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  
+  const colorClass = pinColors[hash % pinColors.length];
+  // Posición aleatoria entre 10% y 80% para que no se salga por los bordes
+  const leftPos = (hash % 70) + 10; 
+
+  return { colorClass, leftPos };
+};
 
 // --- Componente Tablón de Corcho ---
 const CorkboardWidget = () => {
@@ -51,9 +71,6 @@ const CorkboardWidget = () => {
 
   const deleteNote = (id: string) => remove(ref(db, `notes/${id}`));
 
-  // ESTILOS AJUSTADOS:
-  // - grid-cols-4: Para que quepan 4 en fila (más pequeños).
-  // - text: Aumentado para mejor lectura.
   const styles = { 
     grid: "grid-cols-4 gap-2 md:gap-3", 
     card: "p-2", 
@@ -72,7 +89,8 @@ const CorkboardWidget = () => {
       {showInput && (
         <div className="absolute top-16 left-1/2 transform -translate-x-1/2 z-30 w-60 animate-in fade-in zoom-in duration-200">
           <form onSubmit={addNote} className="bg-yellow-100 p-4 shadow-[0_10px_20px_rgba(0,0,0,0.3)] rotate-1 border-t-8 border-yellow-200/50">
-            <div className="w-4 h-4 rounded-full bg-red-600 mx-auto mb-3 shadow-[inset_0_-2px_4px_rgba(0,0,0,0.3)]"></div>
+            {/* Chincheta decorativa del formulario (la mantenemos solo aquí por estética del input) */}
+            <div className="w-4 h-4 rounded-full bg-red-600 mx-auto mb-3 shadow-[inset_0_-2px_4px_rgba(0,0,0,0.3)] border border-red-800"></div>
             <textarea autoFocus className="w-full bg-transparent outline-none text-gray-900 text-lg font-bold resize-none placeholder-gray-500/50 h-24" placeholder="Escribe algo..." value={newNoteText} onChange={e => setNewNoteText(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); addNote(e); } }} />
             <button type="submit" className="w-full mt-2 bg-[#8b5a2b] text-white text-xs font-bold py-2 rounded shadow hover:bg-[#6d4621] transition">FIJAR NOTA</button>
           </form>
@@ -81,9 +99,9 @@ const CorkboardWidget = () => {
 
       <div className={`grid ${styles.grid} auto-rows-min transition-all duration-500 ease-in-out w-full content-start`}>
         
-        {/* --- NOTA FIJA WEBEA --- */}
+        {/* --- NOTA FIJA WEBEA (Sin chincheta ni punto) --- */}
         <div className={`relative shadow-md hover:shadow-xl transition-transform hover:scale-105 duration-300 group bg-white aspect-square ${styles.card} flex flex-col items-center justify-between text-center overflow-hidden w-full border border-gray-300 shadow-inner`} style={{ transform: 'rotate(-1deg)' }}>
-            <div className="absolute -top-1.5 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-red-600 rounded-full shadow-sm z-10 border border-red-800"></div>
+            {/* SE HA ELIMINADO EL DIV DEL PUNTO ROJO AQUÍ */}
             
             <div className="flex flex-col items-center justify-center w-full h-full gap-1 pt-1">
                 <div className="w-full h-1/2 flex items-center justify-center p-1">
@@ -91,7 +109,7 @@ const CorkboardWidget = () => {
                 </div>
                 <div className="w-full flex flex-col justify-center h-1/2 border-t border-gray-100 pt-1">
                     <p className="text-[10px] font-black text-gray-800 leading-tight uppercase mb-0.5">
-                        Desarrollado por Webea
+                        Dev by Webea
                     </p>
                     <div className="w-full">
                         <p className="text-[9px] font-bold text-blue-600 break-all leading-tight">
@@ -102,19 +120,32 @@ const CorkboardWidget = () => {
             </div>
         </div>
 
-        {/* --- NOTAS DINÁMICAS --- */}
-        {notes.map((note) => (
-          <div key={note.id} className={`relative shadow-md hover:shadow-xl transition-transform hover:scale-105 duration-300 group ${note.color} aspect-square ${styles.card} flex items-center justify-center text-center overflow-hidden w-full border border-white/40 shadow-[inset_0_0_10px_rgba(0,0,0,0.05)]`} style={{ transform: `rotate(${note.rotation}deg)` }}>
-            <div className="absolute -top-1.5 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-red-600 rounded-full shadow-sm z-10 border border-red-800"></div>
-            
-            {/* Texto de las notas */}
-            <p className={`text-gray-900 break-words w-full h-full flex items-center justify-center overflow-y-auto custom-scrollbar ${styles.text}`}>
-                {note.text}
-            </p>
-            
-            <button onClick={(e) => { e.stopPropagation(); deleteNote(note.id); }} className="absolute -bottom-1 -right-1 bg-red-500 text-white w-5 h-5 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all text-[10px] font-bold shadow-lg hover:bg-red-600 cursor-pointer z-20">✕</button>
-          </div>
-        ))}
+        {/* --- NOTAS DINÁMICAS (Con chincheta aleatoria) --- */}
+        {notes.map((note) => {
+          const { colorClass, leftPos } = getPinStyle(note.id); // Generar estilo de chincheta
+          
+          return (
+            <div key={note.id} className={`relative shadow-md hover:shadow-xl transition-transform hover:scale-105 duration-300 group ${note.color} aspect-square ${styles.card} flex items-center justify-center text-center overflow-hidden w-full border border-white/40 shadow-[inset_0_0_10px_rgba(0,0,0,0.05)]`} style={{ transform: `rotate(${note.rotation}deg)` }}>
+              
+              {/* --- CHINCHETA ALEATORIA --- */}
+              {/* Se ha sustituido el punto rojo central por esto: */}
+              <div 
+                className={`absolute -top-2 w-3 h-3 md:w-4 md:h-4 rounded-full shadow-[2px_2px_5px_rgba(0,0,0,0.3)] z-20 border ${colorClass}`} 
+                style={{ left: `${leftPos}%` }}
+              >
+                {/* Brillo de la chincheta */}
+                <div className="absolute top-1 left-1 w-1 h-1 bg-white/50 rounded-full"></div>
+              </div>
+              
+              {/* Texto de las notas */}
+              <p className={`text-gray-900 break-words w-full h-full flex items-center justify-center overflow-y-auto custom-scrollbar ${styles.text}`}>
+                  {note.text}
+              </p>
+              
+              <button onClick={(e) => { e.stopPropagation(); deleteNote(note.id); }} className="absolute -bottom-1 -right-1 bg-red-500 text-white w-5 h-5 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all text-[10px] font-bold shadow-lg hover:bg-red-600 cursor-pointer z-20">✕</button>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -204,14 +235,8 @@ export default function AgendaPage() {
   }, []);
 
   return (
-    // Altura calculada para ocupar la pantalla sin scroll (ajustado para móvil y desktop)
     <div className="flex flex-col gap-4 w-full max-w-full h-[calc(100vh-130px)] md:h-[calc(100vh-100px)] pb-1">
-      
-      {/* 1. Tablón de Notas (Tamaño fijo/mínimo) */}
       <CorkboardWidget />
-
-      {/* 2. Listas de Tareas */}
-      {/* grid-cols-2: Dos columnas. flex-1: Ocupa todo el alto restante. */}
       <div className="grid grid-cols-2 gap-4 w-full flex-1 min-h-0">
         <TodoCard title={config.user1} dbPath="tasks/user1" userColor={config.color1} />
         <TodoCard title={config.user2} dbPath="tasks/user2" userColor={config.color2} />
@@ -219,6 +244,3 @@ export default function AgendaPage() {
     </div>
   );
 }
-"""
-
-print(import_file_code)
