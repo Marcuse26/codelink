@@ -5,7 +5,8 @@ import {
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
   updateProfile,
-  sendPasswordResetEmail 
+  sendPasswordResetEmail,
+  sendEmailVerification 
 } from 'firebase/auth';
 import { ref, set, get, child } from 'firebase/database';
 import { auth, db } from '../../firebase/config';
@@ -41,12 +42,16 @@ export default function LoginPage() {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
+        // ENVÍO DE CORREO DE VERIFICACIÓN
+        await sendEmailVerification(user);
+
         await set(ref(db, 'usernames/' + username.toLowerCase()), {
           email: email,
           uid: user.uid
         });
 
         await updateProfile(user, { displayName: username });
+        alert('Cuenta creada con éxito. Se ha enviado un correo de verificación a tu email.');
         router.push('/');
 
       } else {
@@ -109,8 +114,6 @@ export default function LoginPage() {
 
         {/* CABECERA CON LOGO */}
         <div className="flex flex-col items-center justify-center mb-8 relative z-10">
-            
-            {/* AQUÍ ESTÁ EL CAMBIO: src="/codelink-icon.png" */}
             <img 
                 src="/codelink-icon.png" 
                 alt="CodeLink Logo" 

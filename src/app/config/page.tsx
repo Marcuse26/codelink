@@ -1,14 +1,13 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { ref, set, onValue } from 'firebase/database';
-import { updateProfile, updatePassword, deleteUser } from 'firebase/auth';
+import { updateProfile, updatePassword, deleteUser, onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { db, auth } from '../../firebase/config';
 
 export default function ConfigPage() {
   const router = useRouter();
   
-  // Estado para la configuración global
   const [form, setForm] = useState({ 
     user1: '', 
     user2: '', 
@@ -22,25 +21,30 @@ export default function ConfigPage() {
     eventName: '' 
   });
 
-  // Estado para la gestión de cuenta personal
   const [newUsername, setNewUsername] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [currentUid, setCurrentUid] = useState<string | null>(null);
 
-  // Cargar configuración global
   useEffect(() => {
-    const unsubscribe = onValue(ref(db, 'settings'), (s) => {
-        const data = s.val();
-        if (data) setForm({ ...form, ...data });
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setCurrentUid(user.uid);
+        // Cargar configuración específica del usuario
+        const settingsRef = ref(db, `users/${user.uid}/settings`);
+        onValue(settingsRef, (s) => {
+            const data = s.val();
+            if (data) setForm({ ...form, ...data });
+        });
+      }
     });
-    return () => unsubscribe();
+    return () => unsubscribeAuth();
   }, []);
 
   const save = () => {
-    set(ref(db, 'settings'), form);
+    if (!currentUid) return alert('No estás autenticado.');
+    set(ref(db, `users/${currentUid}/settings`), form);
     alert('¡Ajustes guardados correctamente!');
   };
-
-  // --- FUNCIONES DE GESTIÓN DE CUENTA ---
 
   const handleUpdateProfile = async () => {
     if (!auth.currentUser) return;
@@ -50,7 +54,7 @@ export default function ConfigPage() {
       await updateProfile(auth.currentUser, { displayName: newUsername });
       alert('Nombre de usuario actualizado con éxito.');
       setNewUsername('');
-      window.location.reload(); // Recargar para ver cambios
+      window.location.reload();
     } catch (error: any) {
       alert('Error: ' + error.message);
     }
@@ -99,7 +103,6 @@ export default function ConfigPage() {
     <div className="p-6 space-y-8 max-w-2xl mx-auto pb-20">
       <h1 className="text-3xl font-black text-white text-center mb-8 uppercase">AJUSTES</h1>
       
-      {/* --- SECCIÓN 1: AJUSTES GLOBALES DE LA APP --- */}
       <div className="bg-white/5 p-6 rounded-2xl border border-white/10 space-y-6">
         <h2 className="text-xl font-bold text-white border-b border-white/10 pb-2 mb-4">CONFIGURACIÓN APP</h2>
         
@@ -142,11 +145,9 @@ export default function ConfigPage() {
         </button>
       </div>
 
-      {/* --- SECCIÓN 2: GESTIÓN DE CUENTA PERSONAL --- */}
       <div className="bg-black/20 p-6 rounded-2xl border border-white/5 space-y-6">
         <h2 className="text-xl font-bold text-red-200 border-b border-white/10 pb-2 mb-4">MI CUENTA</h2>
 
-        {/* Cambiar Nombre Usuario */}
         <div>
             <label className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-2 block">Cambiar mi nombre de usuario</label>
             <div className="flex gap-3">
@@ -162,7 +163,6 @@ export default function ConfigPage() {
             </div>
         </div>
 
-        {/* Cambiar Contraseña */}
         <div>
             <label className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-2 block">Cambiar contraseña</label>
             <div className="flex gap-3">
@@ -179,7 +179,6 @@ export default function ConfigPage() {
             </div>
         </div>
 
-        {/* Eliminar Cuenta */}
         <div className="pt-4 mt-4 border-t border-white/5">
             <button 
                 onClick={handleDeleteAccount}

@@ -1,13 +1,14 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { ref, onValue } from 'firebase/database';
-import { db } from '../../firebase/config';
+import { onAuthStateChanged } from 'firebase/auth';
+import { db, auth } from '../../firebase/config';
 
 export default function CalendarioPage() {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [config, setConfig] = useState({ 
     reunionDate: '', 
-    eventName: '', // Nuevo estado para el nombre del evento
+    eventName: '', 
     user1: 'Usuario 1', 
     user2: 'Usuario 2',
     calendarUrl1: '#',
@@ -15,11 +16,16 @@ export default function CalendarioPage() {
   });
 
   useEffect(() => {
-    const unsubscribe = onValue(ref(db, 'settings'), (snap) => {
-      const data = snap.val();
-      if (data) setConfig(data);
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+        if (user) {
+            const unsubscribe = onValue(ref(db, `users/${user.uid}/settings`), (snap) => {
+                const data = snap.val();
+                if (data) setConfig(data);
+            });
+            return () => unsubscribe();
+        }
     });
-    return () => unsubscribe();
+    return () => unsubscribeAuth();
   }, []);
 
   useEffect(() => {

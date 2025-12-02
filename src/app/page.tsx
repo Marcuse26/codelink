@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { ref, onValue, push, update, remove } from 'firebase/database';
-import { db } from '../firebase/config';
+import { onAuthStateChanged } from 'firebase/auth';
+import { db, auth } from '../firebase/config';
 
 // --- Tipos ---
 interface Task {
@@ -18,7 +19,6 @@ interface Note {
   rotation: number;
 }
 
-// --- Helper para generar chinchetas estables basadas en el ID ---
 const getPinStyle = (id: string) => {
   const pinColors = [
     'bg-red-600 border-red-800', 
@@ -35,15 +35,15 @@ const getPinStyle = (id: string) => {
   return { colorClass, leftPos };
 };
 
-// --- Componente Tablón de Corcho ---
-const CorkboardWidget = () => {
+const CorkboardWidget = ({ uid }: { uid: string }) => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [newNoteText, setNewNoteText] = useState('');
   const [showInput, setShowInput] = useState(false);
   const noteColors = ['bg-yellow-200', 'bg-blue-200', 'bg-green-200', 'bg-pink-200', 'bg-orange-200'];
 
   useEffect(() => {
-    const unsubscribe = onValue(ref(db, 'notes'), (snapshot) => {
+    if (!uid) return;
+    const unsubscribe = onValue(ref(db, `users/${uid}/notes`), (snapshot) => {
       const data = snapshot.val();
       if (data) {
         const list = Object.entries(data).map(([id, val]: any) => ({ id, ...val }));
@@ -53,19 +53,19 @@ const CorkboardWidget = () => {
       }
     });
     return () => unsubscribe();
-  }, []);
+  }, [uid]);
 
   const addNote = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newNoteText.trim()) return;
     const randomColor = noteColors[Math.floor(Math.random() * noteColors.length)];
     const randomRotation = Math.floor(Math.random() * 6) - 3; 
-    push(ref(db, 'notes'), { text: newNoteText, color: randomColor, rotation: randomRotation, createdAt: Date.now() });
+    push(ref(db, `users/${uid}/notes`), { text: newNoteText, color: randomColor, rotation: randomRotation, createdAt: Date.now() });
     setNewNoteText('');
     setShowInput(false);
   };
 
-  const deleteNote = (id: string) => remove(ref(db, `notes/${id}`));
+  const deleteNote = (id: string) => remove(ref(db, `users/${uid}/notes/${id}`));
 
   const styles = { 
     grid: "grid-cols-4 gap-2 md:gap-3", 
@@ -93,50 +93,29 @@ const CorkboardWidget = () => {
       )}
 
       <div className={`grid ${styles.grid} auto-rows-min transition-all duration-500 ease-in-out w-full content-start`}>
-        
-        {/* --- NOTA FIJA WEBEA --- */}
         <div className={`relative shadow-md hover:shadow-xl transition-transform hover:scale-105 duration-300 group bg-white aspect-square ${styles.card} flex flex-col items-center justify-between text-center overflow-hidden w-full border border-gray-300 shadow-inner`} style={{ transform: 'rotate(-1deg)' }}>
-            
             <div className="flex flex-col items-center justify-center w-full h-full gap-1 pt-1">
                 <div className="w-full h-1/2 flex items-center justify-center p-1">
                     <img src="/webea.png" alt="Webea" className="w-full h-full object-contain" />
                 </div>
-                {/* CAMBIOS AQUÍ: Texto actualizado */}
                 <div className="w-full flex flex-col justify-center h-1/2 border-t border-gray-100 pt-1">
-                    <p className="text-[10px] font-black text-gray-800 leading-tight uppercase mb-1">
-                        Desarrollado por Webea
-                    </p>
+                    <p className="text-[10px] font-black text-gray-800 leading-tight uppercase mb-1">Desarrollado por Webea</p>
                     <div className="w-full">
-                        <p className="text-[9px] font-bold text-gray-500 leading-none mb-0.5">
-                            Soporte:
-                        </p>
-                        <p className="text-[9px] font-bold text-blue-600 break-all leading-tight">
-                            webea.oficial@gmail.com
-                        </p>
+                        <p className="text-[9px] font-bold text-gray-500 leading-none mb-0.5">Soporte:</p>
+                        <p className="text-[9px] font-bold text-blue-600 break-all leading-tight">webea.oficial@gmail.com</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        {/* --- NOTAS DINÁMICAS (Con chincheta aleatoria) --- */}
         {notes.map((note) => {
           const { colorClass, leftPos } = getPinStyle(note.id);
-          
           return (
             <div key={note.id} className={`relative shadow-md hover:shadow-xl transition-transform hover:scale-105 duration-300 group ${note.color} aspect-square ${styles.card} flex items-center justify-center text-center overflow-hidden w-full border border-white/40 shadow-[inset_0_0_10px_rgba(0,0,0,0.05)]`} style={{ transform: `rotate(${note.rotation}deg)` }}>
-              
-              {/* Chincheta aleatoria */}
-              <div 
-                className={`absolute -top-2 w-3 h-3 md:w-4 md:h-4 rounded-full shadow-[2px_2px_5px_rgba(0,0,0,0.3)] z-20 border ${colorClass}`} 
-                style={{ left: `${leftPos}%` }}
-              >
+              <div className={`absolute -top-2 w-3 h-3 md:w-4 md:h-4 rounded-full shadow-[2px_2px_5px_rgba(0,0,0,0.3)] z-20 border ${colorClass}`} style={{ left: `${leftPos}%` }}>
                 <div className="absolute top-1 left-1 w-1 h-1 bg-white/50 rounded-full"></div>
               </div>
-              
-              <p className={`text-gray-900 break-words w-full h-full flex items-center justify-center overflow-y-auto custom-scrollbar ${styles.text}`}>
-                  {note.text}
-              </p>
-              
+              <p className={`text-gray-900 break-words w-full h-full flex items-center justify-center overflow-y-auto custom-scrollbar ${styles.text}`}>{note.text}</p>
               <button onClick={(e) => { e.stopPropagation(); deleteNote(note.id); }} className="absolute -bottom-1 -right-1 bg-red-500 text-white w-5 h-5 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all text-[10px] font-bold shadow-lg hover:bg-red-600 cursor-pointer z-20">✕</button>
             </div>
           );
@@ -146,12 +125,12 @@ const CorkboardWidget = () => {
   );
 };
 
-// --- Componente Lista de Tareas ---
 const TodoCard = ({ title, dbPath, userColor }: { title: string, dbPath: string, userColor: string }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState('');
 
   useEffect(() => {
+    if (!dbPath) return;
     const unsubscribe = onValue(ref(db, dbPath), (snapshot) => {
       const data = snapshot.val();
       if (data) {
@@ -166,7 +145,7 @@ const TodoCard = ({ title, dbPath, userColor }: { title: string, dbPath: string,
 
   const addTask = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newTask.trim()) return;
+    if (!newTask.trim() || !dbPath) return;
     push(ref(db, dbPath), { text: newTask, completed: false });
     setNewTask('');
   };
@@ -175,27 +154,17 @@ const TodoCard = ({ title, dbPath, userColor }: { title: string, dbPath: string,
   const deleteTask = (id: string) => remove(ref(db, `${dbPath}/${id}`));
 
   return (
-    <div 
-        className="p-4 rounded-2xl text-white shadow-lg flex flex-col h-full border border-white/5 w-full overflow-hidden"
-        style={{ 
-            background: `linear-gradient(145deg, ${userColor}, #0f0f1a)`,
-            boxShadow: `0 10px 30px -10px ${userColor}60`
-        }}
-    >
+    <div className="p-4 rounded-2xl text-white shadow-lg flex flex-col h-full border border-white/5 w-full overflow-hidden" style={{ background: `linear-gradient(145deg, ${userColor}, #0f0f1a)`, boxShadow: `0 10px 30px -10px ${userColor}60` }}>
       <h3 className="text-lg md:text-xl font-bold mb-3 border-b border-white/20 pb-2 uppercase truncate">TAREAS DE {title}</h3>
-      
       <form onSubmit={addTask} className="flex gap-2 mb-3 w-full shrink-0">
         <input type="text" value={newTask} onChange={(e) => setNewTask(e.target.value)} placeholder="Nueva tarea..." className="w-full bg-black/20 placeholder-white/50 text-white rounded-lg px-3 py-2 outline-none focus:bg-black/40 transition text-sm backdrop-blur-sm" />
         <button type="submit" className="bg-white/20 hover:bg-white/30 rounded-lg px-3 py-2 transition shrink-0">➕</button>
       </form>
-
       <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar w-full min-h-0">
         {tasks.map((task) => (
           <div key={task.id} className="group flex items-center justify-between bg-black/20 p-2 rounded-lg hover:bg-black/30 transition backdrop-blur-md border border-white/5 w-full">
             <div onClick={() => toggleTask(task)} className="flex items-center gap-3 cursor-pointer flex-1 min-w-0">
-              <div className={`w-5 h-5 shrink-0 rounded border border-white/50 flex items-center justify-center transition-colors ${task.completed ? 'bg-white text-black' : 'bg-transparent'}`}>
-                {task.completed && <span className="text-xs font-bold">✓</span>}
-              </div>
+              <div className={`w-5 h-5 shrink-0 rounded border border-white/50 flex items-center justify-center transition-colors ${task.completed ? 'bg-white text-black' : 'bg-transparent'}`}>{task.completed && <span className="text-xs font-bold">✓</span>}</div>
               <span className={`text-sm ${task.completed ? 'line-through text-white/50' : 'text-white'} truncate`}>{task.text}</span>
             </div>
             <button onClick={() => deleteTask(task.id)} className="text-white/40 hover:text-red-300 opacity-0 group-hover:opacity-100 transition px-2 shrink-0">✕</button>
@@ -207,34 +176,37 @@ const TodoCard = ({ title, dbPath, userColor }: { title: string, dbPath: string,
 };
 
 export default function AgendaPage() {
-  const [config, setConfig] = useState({ 
-    user1: 'Usuario 1', 
-    user2: 'Usuario 2', 
-    color1: '#3b82f6', 
-    color2: '#ec4899' 
-  });
+  const [config, setConfig] = useState({ user1: 'Usuario 1', user2: 'Usuario 2', color1: '#3b82f6', color2: '#ec4899' });
+  const [currentUid, setCurrentUid] = useState<string | null>(null);
 
   useEffect(() => {
-    const unsubscribe = onValue(ref(db, 'settings'), (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-            setConfig({
-                user1: data.user1 || 'Usuario 1',
-                user2: data.user2 || 'Usuario 2',
-                color1: data.color1 || '#3b82f6',
-                color2: data.color2 || '#ec4899'
-            });
-        }
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setCurrentUid(user.uid);
+        onValue(ref(db, `users/${user.uid}/settings`), (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                setConfig({
+                    user1: data.user1 || 'Usuario 1',
+                    user2: data.user2 || 'Usuario 2',
+                    color1: data.color1 || '#3b82f6',
+                    color2: data.color2 || '#ec4899'
+                });
+            }
+        });
+      }
     });
-    return () => unsubscribe();
+    return () => unsubscribeAuth();
   }, []);
+
+  if (!currentUid) return <div className="p-4 text-center text-gray-500">Cargando...</div>;
 
   return (
     <div className="flex flex-col gap-4 w-full max-w-full h-[calc(100vh-130px)] md:h-[calc(100vh-100px)] pb-1">
-      <CorkboardWidget />
+      <CorkboardWidget uid={currentUid} />
       <div className="grid grid-cols-2 gap-4 w-full flex-1 min-h-0">
-        <TodoCard title={config.user1} dbPath="tasks/user1" userColor={config.color1} />
-        <TodoCard title={config.user2} dbPath="tasks/user2" userColor={config.color2} />
+        <TodoCard title={config.user1} dbPath={`users/${currentUid}/tasks/user1`} userColor={config.color1} />
+        <TodoCard title={config.user2} dbPath={`users/${currentUid}/tasks/user2`} userColor={config.color2} />
       </div>
     </div>
   );

@@ -1,7 +1,8 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { ref, onValue, set } from 'firebase/database';
-import { db } from '../../firebase/config';
+import { onAuthStateChanged } from 'firebase/auth';
+import { db, auth } from '../../firebase/config';
 
 const getTodayStr = () => new Date().toISOString().split('T')[0];
 const getYesterdayStr = () => {
@@ -19,20 +20,30 @@ export default function DeportePage() {
     sportUrl2: '#'
   });
   const [loading, setLoading] = useState(true);
+  const [currentUid, setCurrentUid] = useState<string | null>(null);
   const today = getTodayStr();
   const yesterday = getYesterdayStr();
 
   useEffect(() => {
-    const unsubStreak = onValue(ref(db, 'streak'), (snapshot) => {
-      const data = snapshot.val();
-      if (data) setStreakData(data);
-      setLoading(false);
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setCurrentUid(user.uid);
+        
+        // 1. Streak
+        onValue(ref(db, `users/${user.uid}/streak`), (snapshot) => {
+          const data = snapshot.val();
+          if (data) setStreakData(data);
+          setLoading(false);
+        });
+
+        // 2. Settings
+        onValue(ref(db, `users/${user.uid}/settings`), (snapshot) => {
+            const data = snapshot.val();
+            if (data) setConfig(data);
+        });
+      }
     });
-    const unsubConfig = onValue(ref(db, 'settings'), (snapshot) => {
-        const data = snapshot.val();
-        if (data) setConfig(data);
-    });
-    return () => { unsubStreak(); unsubConfig(); };
+    return () => unsubscribeAuth();
   }, []);
 
   const currentStreak = () => {
@@ -45,19 +56,20 @@ export default function DeportePage() {
   const isCompletedToday = streakData.lastDate === today;
 
   const handleStreak = () => {
+    if (!currentUid) return;
     let newCount = 1; 
     if (streakData.lastDate === yesterday) {
       newCount = streakData.count + 1;
     } else if (streakData.lastDate === today) {
       return; 
     }
-    set(ref(db, 'streak'), { count: newCount, lastDate: today });
+    set(ref(db, `users/${currentUid}/streak`), { count: newCount, lastDate: today });
   };
 
   const handleUndo = () => {
-    if (!isCompletedToday) return;
+    if (!currentUid || !isCompletedToday) return;
     const newCount = Math.max(0, streakData.count - 1);
-    set(ref(db, 'streak'), { count: newCount, lastDate: yesterday });
+    set(ref(db, `users/${currentUid}/streak`), { count: newCount, lastDate: yesterday });
   };
 
   return (

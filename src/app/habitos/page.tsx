@@ -3,9 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { ref, onValue, update } from 'firebase/database';
-import { db } from '../../firebase/config';
+import { onAuthStateChanged } from 'firebase/auth';
+import { db, auth } from '../../firebase/config';
 
-// ... (Helpers)
 const getTodayString = () => new Date().toISOString().split('T')[0];
 const getStartOfWeek = (date: Date) => {
   const d = new Date(date);
@@ -25,47 +25,58 @@ export default function HabitosPage() {
   });
   const [todayValues, setTodayValues] = useState({ user1: 0, user2: 0 });
   const [chartData, setChartData] = useState<any[]>([]);
+  const [currentUid, setCurrentUid] = useState<string | null>(null);
   const todayStr = getTodayString();
 
   useEffect(() => {
-    const unsubConfig = onValue(ref(db, 'settings'), (snapshot) => {
-      const data = snapshot.val();
-      if (data) setConfig({
-            user1: data.user1 || 'Usuario 1',
-            user2: data.user2 || 'Usuario 2',
-            color1: data.color1 || '#3b82f6',
-            color2: data.color2 || '#ec4899'
-      });
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+        if (user) {
+            setCurrentUid(user.uid);
+            
+            // 1. Listen Settings
+            onValue(ref(db, `users/${user.uid}/settings`), (snapshot) => {
+                const data = snapshot.val();
+                if (data) setConfig({
+                        user1: data.user1 || 'Usuario 1',
+                        user2: data.user2 || 'Usuario 2',
+                        color1: data.color1 || '#3b82f6',
+                        color2: data.color2 || '#ec4899'
+                });
+            });
+
+            // 2. Listen Habits
+            onValue(ref(db, `users/${user.uid}/habits`), (snapshot) => {
+                const allHabits = snapshot.val() || {};
+                if (allHabits[todayStr]) {
+                    setTodayValues({
+                    user1: Number(allHabits[todayStr].user1 || 0),
+                    user2: Number(allHabits[todayStr].user2 || 0)
+                    });
+                } else {
+                    setTodayValues({ user1: 0, user2: 0 });
+                }
+                const startOfWeek = getStartOfWeek(new Date());
+                const weekData = [];
+                for (let i = 0; i < 7; i++) {
+                    const current = new Date(startOfWeek);
+                    current.setDate(startOfWeek.getDate() + i);
+                    const dateKey = formatDate(current);
+                    const dayData = allHabits[dateKey] || { user1: 0, user2: 0 };
+                    weekData.push({
+                    name: weekDays[i],
+                    val1: Number(dayData.user1 || 0),
+                    val2: Number(dayData.user2 || 0),
+                    });
+                }
+                setChartData(weekData);
+            });
+        }
     });
-    const unsubHabits = onValue(ref(db, 'habits'), (snapshot) => {
-      const allHabits = snapshot.val() || {};
-      if (allHabits[todayStr]) {
-        setTodayValues({
-          user1: Number(allHabits[todayStr].user1 || 0),
-          user2: Number(allHabits[todayStr].user2 || 0)
-        });
-      } else {
-        setTodayValues({ user1: 0, user2: 0 });
-      }
-      const startOfWeek = getStartOfWeek(new Date());
-      const weekData = [];
-      for (let i = 0; i < 7; i++) {
-        const current = new Date(startOfWeek);
-        current.setDate(startOfWeek.getDate() + i);
-        const dateKey = formatDate(current);
-        const dayData = allHabits[dateKey] || { user1: 0, user2: 0 };
-        weekData.push({
-          name: weekDays[i],
-          val1: Number(dayData.user1 || 0),
-          val2: Number(dayData.user2 || 0),
-        });
-      }
-      setChartData(weekData);
-    });
-    return () => { unsubConfig(); unsubHabits(); };
+    return () => unsubscribeAuth();
   }, [todayStr]);
 
   const handleInputChange = (userKey: 'user1' | 'user2', value: string) => {
+    if (!currentUid) return;
     if (value === '') {
        // @ts-ignore
        setTodayValues(prev => ({ ...prev, [userKey]: '' }));
@@ -80,13 +91,12 @@ export default function HabitosPage() {
         user2: userKey === 'user2' ? numVal : Number(todayValues.user2 || 0)
     };
     setTodayValues(newValues);
-    update(ref(db, `habits/${todayStr}`), newValues);
+    update(ref(db, `users/${currentUid}/habits/${todayStr}`), newValues);
   };
 
   return (
     <div className="space-y-8 py-6">
       <div className="grid grid-cols-2 gap-6">
-        {/* Tarjeta Usuario 1 - Borde más marcado (border-4 y sin transparencia en color) */}
         <div className="bg-[#fdfbf7] p-6 rounded-3xl border-4 text-center shadow-lg" style={{ borderColor: config.color1, boxShadow: `0 4px 20px ${config.color1}20` }}>
             <p className="font-black uppercase tracking-wider text-sm mb-3" style={{ color: config.color1 }}>{config.user1}</p>
             <div className="relative w-fit mx-auto">
@@ -95,7 +105,6 @@ export default function HabitosPage() {
             </div>
         </div>
 
-        {/* Tarjeta Usuario 2 - Borde más marcado */}
         <div className="bg-[#fdfbf7] p-6 rounded-3xl border-4 text-center shadow-lg" style={{ borderColor: config.color2, boxShadow: `0 4px 20px ${config.color2}20` }}>
             <p className="font-black uppercase tracking-wider text-sm mb-3" style={{ color: config.color2 }}>{config.user2}</p>
             <div className="relative w-fit mx-auto">
@@ -105,10 +114,7 @@ export default function HabitosPage() {
         </div>
       </div>
 
-      {/* Contenedor Gráfica - Borde gris más grueso (border-4) */}
       <div className="bg-[#fdfbf7] p-6 rounded-3xl border-4 border-gray-300 shadow-xl">
-        
-        {/* Título modificado: Sin raya lateral, texto más oscuro y grande */}
         <h3 className="text-gray-800 font-black mb-6 text-xl uppercase tracking-widest">
             PROGRESO SEMANAL
         </h3>
