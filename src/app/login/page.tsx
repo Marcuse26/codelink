@@ -110,8 +110,9 @@ export default function LoginPage() {
         {/* CABECERA CON LOGO */}
         <div className="flex flex-col items-center justify-center mb-8 relative z-10">
             
+            {/* AQUÍ ESTÁ EL CAMBIO: src="/codelink-icon.png" */}
             <img 
-                src="/logo.png" 
+                src="/codelink-icon.png" 
                 alt="CodeLink Logo" 
                 className="w-auto h-auto max-w-[80%] md:max-w-[300px] max-h-[100px] md:max-h-[120px] mx-auto object-contain mb-6 drop-shadow-xl"
             />
@@ -132,7 +133,6 @@ export default function LoginPage() {
               value={username} 
               onChange={(e) => setUsername(e.target.value)} 
               className="w-full p-4 rounded-xl bg-black/40 border border-white/10 text-white placeholder-gray-600 focus:outline-none focus:border-pink-500 transition focus:ring-1 focus:ring-pink-500" 
-              // Placeholder eliminado
               required 
             />
           </div>
@@ -159,7 +159,6 @@ export default function LoginPage() {
                 value={password} 
                 onChange={(e) => setPassword(e.target.value)} 
                 className="w-full p-4 rounded-xl bg-black/40 border border-white/10 text-white placeholder-gray-600 focus:outline-none focus:border-pink-500 transition focus:ring-1 focus:ring-pink-500" 
-                // Placeholder eliminado
                 required={!isRecovering} 
               />
             </div>
