@@ -44,9 +44,9 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   if (!user) return null;
 
   return (
-    <div className="flex h-screen w-full bg-[#f8f9fa] font-sans overflow-hidden">
+    <div className="flex h-screen w-full bg-[#f0f2f5] font-sans overflow-hidden">
       
-      {/* SIDEBAR (Escritorio) */}
+      {/* SIDEBAR (Escritorio) - Se mantiene igual */}
       <aside className="hidden md:flex w-[260px] flex-col justify-between border-r border-[#e9ecef] bg-white p-5 shrink-0">
         <div>
           <div className="mb-8 flex justify-center py-4 border-b border-[#f1f3f5]">
@@ -77,27 +77,23 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
       {/* CONTENIDO PRINCIPAL */}
       <main className="flex flex-1 flex-col overflow-hidden bg-[#f0f2f5] relative">
         
-        {/* CORRECCIÓN AQUÍ: 
-           Hemos aplicado 'pb-32' (padding-bottom grande) al contenedor que hace scroll.
-           Esto asegura que el contenido final quede por encima de la barra fija en móviles.
-           En escritorio (md:pb-8) volvemos a un padding normal.
-        */}
+        {/* Contenido con padding inferior para no chocar con la barra */}
         <div className="flex-1 overflow-y-auto p-4 pb-32 md:p-8 md:pb-8">
            <div className="mx-auto max-w-6xl pt-4 md:pt-0">
               {children}
            </div>
         </div>
 
-        {/* BARRA INFERIOR (Móvil) - ENMARCADA */}
-        <div className="fixed bottom-0 left-0 w-full h-[80px] bg-white flex md:hidden items-center justify-around z-50 pb-2 shadow-[0_-5px_15px_rgba(0,0,0,0.1)] border-t border-gray-300">
+        {/* BARRA INFERIOR (Móvil) - AZUL DIFERENCIADA */}
+        <div className="fixed bottom-0 left-0 w-full h-[80px] bg-blue-600 flex md:hidden items-center justify-around z-50 pb-2 shadow-[0_-5px_20px_rgba(0,0,0,0.3)]">
             <BottomNavLink href="/" active={pathname === '/'} icon={<Icons.Academic />} label="Académico" />
             <BottomNavLink href="/deporte" active={pathname === '/deporte'} icon={<Icons.Sport />} label="Deporte" />
             <BottomNavLink href="/habitos" active={pathname === '/habitos'} icon={<Icons.Habits />} label="Hábitos" />
             <BottomNavLink href="/calendario" active={pathname === '/calendario'} icon={<Icons.Heart />} label="Planing" />
             <BottomNavLink href="/config" active={pathname === '/config'} icon={<Icons.Settings />} label="Ajustes" />
             
-            {/* BOTÓN SALIR EN ROJO */}
-            <button onClick={() => signOut(auth)} className="flex flex-col items-center justify-center w-full h-full gap-1 text-red-500 hover:bg-red-50 transition-colors">
+            {/* BOTÓN SALIR EN ROJO/BLANCO SOBRE AZUL */}
+            <button onClick={() => signOut(auth)} className="flex flex-col items-center justify-center w-full h-full gap-1 text-red-200 hover:text-white transition-colors">
                 <span className="scale-90"><Icons.Logout /></span>
                 <span className="text-[9px] font-bold uppercase tracking-wide">Salir</span>
             </button>
@@ -113,9 +109,10 @@ const SidebarLink = ({ href, active, icon, label }: any) => (
   </Link>
 );
 
+// Componente BottomNavLink actualizado para fondo AZUL
 const BottomNavLink = ({ href, active, icon, label }: any) => (
-    <Link href={href} className={`flex flex-col items-center justify-center w-full h-full gap-1 transition-all ${active ? 'text-pink-600 bg-pink-50/50 rounded-lg' : 'text-gray-400'}`}>
-      <span className={`${active ? 'scale-110' : 'scale-90'} transition-transform`}>{icon}</span>
+    <Link href={href} className={`flex flex-col items-center justify-center w-full h-full gap-1 transition-all ${active ? 'text-white scale-110' : 'text-blue-200 hover:text-blue-100'}`}>
+      <span className="transition-transform">{icon}</span>
       <span className="text-[9px] font-bold uppercase tracking-wide">{label}</span>
     </Link>
 );
