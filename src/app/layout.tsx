@@ -76,7 +76,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
       <main className="flex flex-1 flex-col min-w-0 overflow-hidden bg-[#f0f2f5] relative">
         
         {/* BARRA INFERIOR (Móvil) - DISEÑO IMPACT */}
-        {/* Usamos border-black sólido y fondo naranja puro */}
         <div className="md:hidden w-full h-[65px] shrink-0 flex items-stretch justify-center z-50 border-t-2 border-b-2 border-black bg-orange-500">
             
             <BottomNavLink href="/" active={pathname === '/'} label="ACAD." />
@@ -85,7 +84,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
             <BottomNavLink href="/calendario" active={pathname === '/calendario'} label="PLAN" />
             <BottomNavLink href="/config" active={pathname === '/config'} label="CONF" />
             
-            {/* BOTÓN SALIR - Fondo ROJO pero manteniendo bordes negros y texto negro */}
+            {/* BOTÓN SALIR */}
             <button 
                 onClick={() => signOut(auth)} 
                 className="flex-1 flex items-center justify-center bg-red-600 border-l-2 border-black active:bg-red-700 transition-colors"
@@ -112,7 +111,7 @@ const SidebarLink = ({ href, active, icon, label }: any) => (
   </Link>
 );
 
-// Componente Enlace Móvil - TEXTO NEGRO Y NEGRITA
+// Componente Enlace Móvil
 const BottomNavLink = ({ href, active, label }: any) => (
     <Link 
         href={href} 
@@ -132,7 +131,20 @@ const BottomNavLink = ({ href, active, label }: any) => (
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es">
-      <body className={inter.className}><AuthProvider><MainLayout>{children}</MainLayout></AuthProvider></body>
+      <head>
+        <title>CodeLink</title>
+        <meta name="description" content="Tu espacio compartido" />
+        {/* Favicon e Icono de App */}
+        <link rel="icon" href="/logo.png" />
+        <link rel="apple-touch-icon" href="/logo.png" />
+        {/* Manifest para PWA (Android) */}
+        <link rel="manifest" href="/manifest.json" />
+      </head>
+      <body className={inter.className}>
+        <AuthProvider>
+          <MainLayout>{children}</MainLayout>
+        </AuthProvider>
+      </body>
     </html>
   );
 }
