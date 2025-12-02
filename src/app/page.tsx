@@ -87,8 +87,8 @@ const CorkboardWidget = () => {
         <div className={`relative shadow-[2px_2px_8px_rgba(0,0,0,0.15)] transition-transform hover:scale-105 duration-300 group bg-white ${styles.card} flex flex-col items-center justify-center text-center overflow-hidden w-full`} style={{ transform: 'rotate(-2deg)' }}>
             <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-red-600 rounded-full shadow-[1px_1px_2px_rgba(0,0,0,0.3)] z-10 border border-red-800"></div>
             <div className="flex flex-col items-center justify-center w-full h-full gap-1">
-                {/* Logo Webea */}
-                <img src="/webea.png" alt="Webea" className="w-auto h-8 md:h-10 object-contain mb-1" />
+                {/* Logo Webea - TAMAÑO REDUCIDO (h-4 md:h-6) */}
+                <img src="/webea.png" alt="Webea" className="w-auto h-4 md:h-6 object-contain mb-1" />
                 <div className={`text-gray-800 font-bold leading-tight ${styles.text}`}>
                     <p>Desarrollado por Webea</p>
                     <div className="mt-2 pt-2 border-t border-gray-100 w-full">
