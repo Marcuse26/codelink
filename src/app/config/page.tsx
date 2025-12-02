@@ -90,7 +90,6 @@ export default function ConfigPage() {
       const userUid = auth.currentUser.uid;
 
       // 1. Liberar nombre de usuario
-      // Buscamos en la lista 'usernames' cuál entrada pertenece a este UID
       const usernamesRef = ref(db, 'usernames');
       const q = query(usernamesRef, orderByChild('uid'), equalTo(userUid));
       const snapshot = await get(q);
@@ -98,7 +97,6 @@ export default function ConfigPage() {
       if (snapshot.exists()) {
         const promises: Promise<void>[] = [];
         snapshot.forEach((childSnapshot) => {
-            // Borramos la entrada del nombre de usuario (ej: usernames/juan123)
             promises.push(remove(childSnapshot.ref));
         });
         await Promise.all(promises);
@@ -209,6 +207,15 @@ export default function ConfigPage() {
                 ⚠️ Eliminar mi cuenta permanentemente
             </button>
         </div>
+      </div>
+
+      {/* --- NUEVO FOOTER DE WEBEA --- */}
+      <div className="flex flex-col items-center justify-center pt-10 pb-6 opacity-60">
+         <img src="/webea.png" alt="Webea" className="h-6 mb-2 opacity-50 grayscale hover:grayscale-0 transition-all" />
+         <p className="text-xs text-gray-500 font-medium">Desarrollado por Webea</p>
+         <a href="mailto:webea.oficial@gmail.com" className="text-[10px] text-gray-600 hover:text-pink-500 transition-colors mt-1">
+            Soporte: webea.oficial@gmail.com
+         </a>
       </div>
 
     </div>
