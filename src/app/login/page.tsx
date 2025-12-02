@@ -107,18 +107,16 @@ export default function LoginPage() {
         <div className="absolute -top-10 -right-10 w-32 h-32 bg-pink-500/20 rounded-full blur-3xl"></div>
         <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl"></div>
 
-        {/* CABECERA CON LOGO (USANDO IMG NORMAL) */}
+        {/* CABECERA CON LOGO */}
         <div className="flex flex-col items-center justify-center mb-8 relative z-10">
             
-            {/* Aquí usamos img estándar de HTML para evitar problemas de caché de Next.js */}
-            {/* CORRECCIÓN: Clases responsive añadidas (w-40 md:w-64) */}
+            {/* CORRECCIÓN: Logo adaptable con límites máximos */}
             <img 
                 src="/logo.png" 
                 alt="CodeLink Logo" 
-                className="w-40 md:w-64 h-auto object-contain mb-4 drop-shadow-xl"
+                className="w-auto h-auto max-w-[80%] md:max-w-[300px] max-h-[100px] md:max-h-[120px] mx-auto object-contain mb-6 drop-shadow-xl"
             />
             
-            {/* Texto de estado (solo visible en registro/recuperación) */}
             <p className="text-gray-400 text-xs uppercase tracking-widest font-bold">
                 {isRecovering ? 'RECUPERAR CONTRASEÑA' : (isRegister ? 'CREAR NUEVA CUENTA' : '')}
             </p>
@@ -128,7 +126,6 @@ export default function LoginPage() {
 
         <form onSubmit={isRecovering ? handleResetPassword : handleAuth} className="space-y-5 relative z-10">
           
-          {/* CAMPO USUARIO */}
           <div>
             <label className="block text-gray-400 text-xs font-bold mb-1 ml-1 uppercase">Nombre de Usuario</label>
             <input 
@@ -141,7 +138,6 @@ export default function LoginPage() {
             />
           </div>
 
-          {/* CAMPO EMAIL (Solo Registro) */}
           {isRegister && !isRecovering && (
             <div className="animate-fade-in-down">
               <label className="block text-gray-400 text-xs font-bold mb-1 ml-1 uppercase">Email</label>
@@ -156,7 +152,6 @@ export default function LoginPage() {
             </div>
           )}
 
-          {/* CAMPO CONTRASEÑA */}
           {!isRecovering && (
             <div>
               <label className="block text-gray-400 text-xs font-bold mb-1 ml-1 uppercase">Contraseña</label>
@@ -171,7 +166,6 @@ export default function LoginPage() {
             </div>
           )}
 
-          {/* ENLACE OLVIDÉ CONTRASEÑA */}
           {!isRegister && !isRecovering && (
             <div className="flex justify-end">
                 <button 
